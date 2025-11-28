@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Editor</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <header>
+        <div class="menu-item">File</div>
+        <div class="menu-item">Edit</div>
+        <div class="menu-item">View</div>
+        <div class="menu-item">Help</div>
+    </header>
+
+    <div id="objectList" class="sidebar">
+        <div class="sidebar-header">Object List</div>
+        <div class="sidebar-content">
+            <!-- Object list items will go here -->
+            <p style="color: var(--text-secondary); font-style: italic;">No objects</p>
+        </div>
+    </div>
+
+    <main>
+        <canvas id="canvas"></canvas>
+    </main>
+
+    <div id="properties" class="sidebar">
+        <div class="sidebar-header">Properties</div>
+        <div class="sidebar-content">
+            <!-- Properties will go here -->
+            <p style="color: var(--text-secondary); font-style: italic;">Select an object</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="status-item">Ready</div>
+        <div class="status-item">Zoom: 100%</div>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
