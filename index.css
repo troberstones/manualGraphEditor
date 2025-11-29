@@ -346,3 +346,26 @@ footer {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: var(--accent-color);
 }
+
+.vec-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vec-input {
+  width: 60px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid transparent;
+  color: var(--text-primary);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+.vec-input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color);
+}

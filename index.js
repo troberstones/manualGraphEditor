@@ -503,8 +503,22 @@ function populateRightPropertyEditor() {
             }
         } else if (type === 'Vec3f' || type === 'Vec2f') {
             inputContainer = document.createElement('div');
-            inputContainer.className = 'property-value-display';
-            inputContainer.textContent = Array.isArray(attr.default) ? `[${attr.default.map(n => n.toFixed(2)).join(', ')}]` : type;
+            inputContainer.className = 'vec-container';
+
+            const isVec3 = type === 'Vec3f';
+            const defaultVal = Array.isArray(attr.default) ? attr.default : (isVec3 ? [0, 0, 0] : [0, 0]);
+            const labels = isVec3 ? ['X', 'Y', 'Z'] : ['X', 'Y'];
+
+            labels.forEach((axis, idx) => {
+                const numInput = document.createElement('input');
+                numInput.type = 'number';
+                numInput.className = 'vec-input';
+                numInput.step = '0.01';
+                numInput.value = defaultVal[idx] !== undefined ? defaultVal[idx] : 0;
+                numInput.title = axis;
+                numInput.placeholder = axis;
+                inputContainer.appendChild(numInput);
+            });
         } else {
             inputContainer = document.createElement('input');
             inputContainer.type = 'text';
