@@ -76,10 +76,13 @@ function RdlObject() {
     this.y = null;
     // the width of a node is defined globally.
     this.height = nodeHeight;
-    this.editedProperties = null
-    this.connections = null;
+    this.connections = {};
     this.nodeObject = null;
     this.editedProperties = {};
+}
+function NodeConnection(attributeName, sourceNode) {
+    this.attributeName = attributeName;
+    this.sourceNode = sourceNode;
 }
 
 async function readJsonFile(filename) {
@@ -118,6 +121,8 @@ function createRdlObject(object, name) {
     rdlObject.name = tmpName;
     setOfNames.push(tmpName);
     listOfObjects.push(rdlObject);
+    // retunr the last object pushed onto the list
+    return listOfObjects[listOfObjects.length - 1];
 }
 // function to draw an individual rdlObject on the canvas
 // this will need to handel the drawing of the connections, 
@@ -146,11 +151,28 @@ function drawRdlObject(object) {
     ctx.fillStyle = "#fff";
     ctx.fillText(object.name, drawX + nodeWidth / 2, drawY + nodeHeight / 2);
 }
+// function to draw a line between the left edge of a node and the right edge of the connected node
+function drawConnections(object) {
+    const drawX = object.x + canvasOffsetX;
+    const drawY = object.y + canvasOffsetY;
+    for (const key in object.connections) {
+        const sourceNode = object.connections[key].sourceNode;
+        const sourceDrawX = sourceNode.x + canvasOffsetX;
+        const sourceDrawY = sourceNode.y + canvasOffsetY;
+        ctx.strokeStyle = "#e5de9aff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(sourceDrawX + nodeWidth, sourceDrawY + nodeHeight / 2);
+        ctx.lineTo(drawX, drawY + nodeHeight / 2);
+        ctx.stroke();
+    }
+}
 // refreshTheCanvas function to clear the canvas and redraw all the objects
 function refreshTheCanvas() {
     draw();
     for (const object of listOfObjects) {
         drawRdlObject(object);
+        drawConnections(object);
     }
 }
 // function to handle mouse events
@@ -631,33 +653,17 @@ function populateRightPropertyEditor() {
         contentArea.appendChild(row);
     });
 }
-//function to handle the selection of objects
-function handleSelection() {
-
+function createNodeConnection(node, attributeName, sourceNode) {
+    node.connections[attributeName] = new NodeConnection(attributeName, sourceNode);
 }
-// function to initialize the application
 // function to initialize the application
 async function init() {
     listOfObjects = [];
     rdl2Objects = await readJsonFile("rdl2Objects.json");
-
-    // create a test object
-    var testObject = new RdlObject();
-    testObject.id = "testObject";
-    testObject.name = "Test Object";
-    testObject.type = "testObject";
-    testObject.x = 100;
-    testObject.y = 100;
-    createRdlObject(testObject, "Test Object");
-
-    // create a test object2
-    var testObject2 = new RdlObject();
-    testObject2.id = "testObject2";
-    testObject2.name = "Test Object 2";
-    testObject2.type = "testObject2";
-    testObject2.x = 150;
-    testObject.y = 150;
-    createRdlObject(testObject2, "Test Object");
+    // create a rdl2 BaseMaterial object
+    var baseMaterial = createRdlObject(rdl2Objects.scene_classes["BaseMaterial"], "Test Base Material");
+    var blendMap = createRdlObject(rdl2Objects.scene_classes["BlendMap"], "Test BlendMap");
+    createNodeConnection(baseMaterial, "diffuse_color", blendMap);
 
     refreshTheCanvas();
 
