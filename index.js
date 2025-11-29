@@ -76,8 +76,10 @@ function RdlObject() {
     this.y = null;
     // the width of a node is defined globally.
     this.height = nodeHeight;
+    this.editedProperties = null
     this.connections = null;
     this.nodeObject = null;
+    this.editedProperties = {};
 }
 
 async function readJsonFile(filename) {
@@ -376,15 +378,28 @@ function populateRightPropertyEditor() {
             row.appendChild(spacer);
         }
 
+        // Determine value
+        const hasEditedValue = selectedObject.editedProperties && selectedObject.editedProperties.hasOwnProperty(key);
+        const currentValue = hasEditedValue ? selectedObject.editedProperties[key] : attr.default;
+
         // Label
         const label = document.createElement('label');
         label.className = 'property-label';
         label.textContent = attr.metadata && attr.metadata.label ? attr.metadata.label : key;
         label.title = key; // Tooltip with full key
+        if (hasEditedValue) {
+            label.style.color = 'orange';
+        }
 
         // Generate Input Container
         let inputContainer;
         const type = attr.attrType;
+
+        const updateProperty = (val) => {
+            if (!selectedObject.editedProperties) selectedObject.editedProperties = {};
+            selectedObject.editedProperties[key] = val;
+            label.style.color = 'orange';
+        };
 
         if (attr.enum) {
             // Enum Dropdown
@@ -398,27 +413,53 @@ function populateRightPropertyEditor() {
                 const option = document.createElement('option');
                 option.value = enumValue;
                 option.textContent = enumLabel;
-                if (enumValue === attr.default) {
+                if (enumValue == currentValue) {
                     option.selected = true;
                 }
                 inputContainer.appendChild(option);
             });
+
+            inputContainer.addEventListener('change', (e) => {
+                let val = e.target.value;
+                // Attempt to preserve number type if default was number
+                if (typeof attr.default === 'number') {
+                    val = parseFloat(val);
+                }
+                updateProperty(val);
+            });
+
         } else if (type === 'Bool') {
             inputContainer = document.createElement('input');
             inputContainer.type = 'checkbox';
-            inputContainer.checked = attr.default === true;
+            inputContainer.checked = currentValue === true;
+            inputContainer.addEventListener('change', (e) => {
+                updateProperty(e.target.checked);
+            });
         } else if (type === 'Int' || type === 'Float') {
             inputContainer = document.createElement('input');
             inputContainer.type = 'number';
             inputContainer.className = 'property-input';
-            inputContainer.value = attr.default !== undefined ? attr.default : 0;
+            inputContainer.value = currentValue !== undefined ? currentValue : 0;
             if (type === 'Float') inputContainer.step = '0.1';
+
+            inputContainer.addEventListener('input', (e) => {
+                const val = type === 'Int' ? parseInt(e.target.value) : parseFloat(e.target.value);
+                updateProperty(val);
+            });
         } else if (type === 'Rgb') {
             // Color Swatch + RGB Inputs
             inputContainer = document.createElement('div');
             inputContainer.className = 'rgb-container';
 
-            const defaultColor = Array.isArray(attr.default) ? attr.default : [1.0, 1.0, 1.0];
+            const val = Array.isArray(currentValue) ? currentValue : [1.0, 1.0, 1.0];
+
+            const getArray = () => {
+                if (selectedObject.editedProperties && selectedObject.editedProperties[key]) {
+                    return selectedObject.editedProperties[key];
+                }
+                return [...val];
+            };
+
             const to255 = (v) => Math.min(255, Math.max(0, Math.round(v * 255)));
             const rgbToHex = (r, g, b) => {
                 return "#" + [r, g, b].map(x => {
@@ -430,24 +471,26 @@ function populateRightPropertyEditor() {
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
             colorInput.className = 'color-swatch';
-            colorInput.value = rgbToHex(defaultColor[0], defaultColor[1], defaultColor[2]);
+            colorInput.value = rgbToHex(val[0], val[1], val[2]);
 
             inputContainer.appendChild(colorInput);
 
+            const numInputs = [];
             ['R', 'G', 'B'].forEach((channel, idx) => {
                 const numInput = document.createElement('input');
                 numInput.type = 'number';
                 numInput.className = 'rgb-input';
                 numInput.step = '0.01';
-                numInput.value = defaultColor[idx].toFixed(3);
+                numInput.value = val[idx].toFixed(3);
                 numInput.title = channel;
                 inputContainer.appendChild(numInput);
+                numInputs.push(numInput);
 
                 numInput.addEventListener('input', () => {
-                    const r = parseFloat(inputContainer.children[1].value) || 0;
-                    const g = parseFloat(inputContainer.children[2].value) || 0;
-                    const b = parseFloat(inputContainer.children[3].value) || 0;
-                    colorInput.value = rgbToHex(r, g, b);
+                    const arr = getArray();
+                    arr[idx] = parseFloat(numInput.value) || 0;
+                    updateProperty(arr);
+                    colorInput.value = rgbToHex(arr[0], arr[1], arr[2]);
                 });
             });
 
@@ -457,9 +500,15 @@ function populateRightPropertyEditor() {
                 const g = parseInt(hex.substr(3, 2), 16) / 255;
                 const b = parseInt(hex.substr(5, 2), 16) / 255;
 
-                inputContainer.children[1].value = r.toFixed(3);
-                inputContainer.children[2].value = g.toFixed(3);
-                inputContainer.children[3].value = b.toFixed(3);
+                const arr = getArray();
+                arr[0] = r;
+                arr[1] = g;
+                arr[2] = b;
+                updateProperty(arr);
+
+                numInputs[0].value = r.toFixed(3);
+                numInputs[1].value = g.toFixed(3);
+                numInputs[2].value = b.toFixed(3);
             });
 
         } else if (type === 'Mat4d') {
@@ -467,12 +516,19 @@ function populateRightPropertyEditor() {
             inputContainer = document.createElement('div');
             inputContainer.className = 'matrix-container';
 
-            const defaultMatrix = Array.isArray(attr.default) ? attr.default : [
+            const val = Array.isArray(currentValue) ? currentValue : [
                 [1, 0, 0, 0],
                 [0, 1, 0, 0],
                 [0, 0, 1, 0],
                 [0, 0, 0, 1]
             ];
+
+            const getMatrix = () => {
+                if (selectedObject.editedProperties && selectedObject.editedProperties[key]) {
+                    return selectedObject.editedProperties[key];
+                }
+                return val.map(row => [...row]);
+            };
 
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 4; j++) {
@@ -480,8 +536,15 @@ function populateRightPropertyEditor() {
                     matInput.type = 'number';
                     matInput.className = 'matrix-input';
                     matInput.step = '0.01';
-                    const val = (defaultMatrix[i] && defaultMatrix[i][j] !== undefined) ? defaultMatrix[i][j] : (i === j ? 1 : 0);
-                    matInput.value = val;
+                    const v = (val[i] && val[i][j] !== undefined) ? val[i][j] : (i === j ? 1 : 0);
+                    matInput.value = v;
+
+                    matInput.addEventListener('input', (e) => {
+                        const mat = getMatrix();
+                        if (!mat[i]) mat[i] = [];
+                        mat[i][j] = parseFloat(e.target.value) || 0;
+                        updateProperty(mat);
+                    });
                     inputContainer.appendChild(matInput);
                 }
             }
@@ -490,26 +553,44 @@ function populateRightPropertyEditor() {
             inputContainer.className = 'vec-container';
 
             const isVec3 = type === 'Vec3f';
-            const defaultVal = Array.isArray(attr.default) ? attr.default : (isVec3 ? [0, 0, 0] : [0, 0]);
+            const val = Array.isArray(currentValue) ? currentValue : (isVec3 ? [0, 0, 0] : [0, 0]);
             const labels = isVec3 ? ['X', 'Y', 'Z'] : ['X', 'Y'];
+
+            const getVec = () => {
+                if (selectedObject.editedProperties && selectedObject.editedProperties[key]) {
+                    return selectedObject.editedProperties[key];
+                }
+                return [...val];
+            };
 
             labels.forEach((axis, idx) => {
                 const numInput = document.createElement('input');
                 numInput.type = 'number';
                 numInput.className = 'vec-input';
                 numInput.step = '0.01';
-                numInput.value = defaultVal[idx] !== undefined ? defaultVal[idx] : 0;
+                numInput.value = val[idx] !== undefined ? val[idx] : 0;
                 numInput.title = axis;
                 numInput.placeholder = axis;
+
+                numInput.addEventListener('input', (e) => {
+                    const vec = getVec();
+                    vec[idx] = parseFloat(e.target.value) || 0;
+                    updateProperty(vec);
+                });
+
                 inputContainer.appendChild(numInput);
             });
         } else {
             inputContainer = document.createElement('input');
             inputContainer.type = 'text';
             inputContainer.className = 'property-input';
-            let val = attr.default !== undefined ? attr.default : '';
+            let val = currentValue !== undefined ? currentValue : '';
             if (typeof val === 'object') val = JSON.stringify(val);
             inputContainer.value = val;
+
+            inputContainer.addEventListener('input', (e) => {
+                updateProperty(e.target.value);
+            });
         }
 
         // Layout Logic
