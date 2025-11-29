@@ -100,19 +100,26 @@ function createRdlObject(object) {
 // - [draw the connections ]
 // - [draw the connection handles ]
 function drawRdlObject(object) {
-    draw();
-    console.log("Drawing object: " + object.name);
+
+    // if selected, then draw a light outline around the object.
     ctx.fillStyle = "#333";
+    if (object === selectedObject) {
+        ctx.strokeStyle = "#b3acacff";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(object.x, object.y, nodeWidth, nodeHeight);
+    }
+    console.log("Drawing object: " + object.name);
     ctx.fillRect(object.x, object.y, nodeWidth, nodeHeight);
-    ctx.fillStyle = "#b3acacff";
     ctx.font = "12px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
+    ctx.fillStyle = "#fff";
     ctx.fillText(object.name, object.x + nodeWidth / 2, object.y + nodeHeight / 2);
 }
 // refreshTheCanvas function to clear the canvas and redraw all the objects
 function refreshTheCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    draw();
+    //ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (const object of listOfObjects) {
         drawRdlObject(object);
     }
@@ -283,6 +290,15 @@ async function init() {
     testObject.x = 100;
     testObject.y = 100;
     createRdlObject(testObject);
+
+    // create a test object2
+    var testObject2 = new RdlObject();
+    testObject2.id = "testObject2";
+    testObject2.name = "Test Object 2";
+    testObject2.type = "testObject2";
+    testObject2.x = 150;
+    testObject.y = 150;
+    createRdlObject(testObject2);
 
     refreshTheCanvas();
 
