@@ -52,6 +52,11 @@ var listOfObjects = null; // this contains the objects that have been created in
 var nodeWidth = 100;
 var nodeHeight = 50;
 
+var selectedObject = null;
+var isDragging = false;
+var dragOffsetX = 0;
+var dragOffsetY = 0;
+
 // rdlObject class
 function RdlObject() {
     this.id = null;
@@ -117,13 +122,55 @@ function refreshTheCanvas() {
 // and the movement of objects
 // TODO:
 // - [handle mouse events ]
-function handleMouseEvents() {
-    // when the user clickes in the canvas, check to see if the mouse click intersects any of the list of objects
-    // if it does, select that object
-    // if it doesn't, clear the selection
-    // when the user drags the mouse, move the selected object
-    // when the user releases the mouse, clear the selection
+function setupMouseEvents() {
+    canvas.addEventListener('mousedown', function (e) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
 
+        // Check if we clicked on an object
+        // Iterate in reverse order to select the top-most object if they overlap
+        let clickedObject = null;
+        for (let i = listOfObjects.length - 1; i >= 0; i--) {
+            const obj = listOfObjects[i];
+            if (mouseX >= obj.x && mouseX <= obj.x + nodeWidth &&
+                mouseY >= obj.y && mouseY <= obj.y + nodeHeight) {
+                clickedObject = obj;
+                break;
+            }
+        }
+
+        if (clickedObject) {
+            selectedObject = clickedObject;
+            isDragging = true;
+            dragOffsetX = mouseX - selectedObject.x;
+            dragOffsetY = mouseY - selectedObject.y;
+            populateRightPropertyEditor();
+        } else {
+            selectedObject = null;
+        }
+        refreshTheCanvas();
+    });
+
+    canvas.addEventListener('mousemove', function (e) {
+        if (isDragging && selectedObject) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            selectedObject.x = mouseX - dragOffsetX;
+            selectedObject.y = mouseY - dragOffsetY;
+            refreshTheCanvas();
+        }
+    });
+
+    canvas.addEventListener('mouseup', function (e) {
+        isDragging = false;
+    });
+
+    canvas.addEventListener('mouseleave', function (e) {
+        isDragging = false;
+    });
 }
 
 //function to populate the left hand column with a list of the objects from the rdl2Objects.json file
@@ -243,6 +290,8 @@ async function init() {
     if (rdl2Objects) {
         populateLeftRDLObjectList();
     }
+
+    setupMouseEvents();
 }
 
 // Initialize when DOM is ready
