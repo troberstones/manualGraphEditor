@@ -472,6 +472,35 @@ function populateRightPropertyEditor() {
                 inputContainer.children[3].value = b.toFixed(3);
             });
 
+        } else if (type === 'Mat4d') {
+            // 4x4 Matrix
+            row.style.flexDirection = 'column';
+            row.style.alignItems = 'flex-start';
+            label.style.marginBottom = '4px';
+            label.style.width = '100%';
+
+            inputContainer = document.createElement('div');
+            inputContainer.className = 'matrix-container';
+
+            const defaultMatrix = Array.isArray(attr.default) ? attr.default : [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1]
+            ];
+
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const matInput = document.createElement('input');
+                    matInput.type = 'number';
+                    matInput.className = 'matrix-input';
+                    matInput.step = '0.01';
+                    // Check if defaultMatrix[i] exists and has [j]
+                    const val = (defaultMatrix[i] && defaultMatrix[i][j] !== undefined) ? defaultMatrix[i][j] : (i === j ? 1 : 0);
+                    matInput.value = val;
+                    inputContainer.appendChild(matInput);
+                }
+            }
         } else if (type === 'Vec3f' || type === 'Vec2f') {
             inputContainer = document.createElement('div');
             inputContainer.className = 'property-value-display';

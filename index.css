@@ -321,3 +321,28 @@ footer {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: var(--accent-color);
 }
+
+.matrix-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.matrix-input {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid transparent;
+  color: var(--text-primary);
+  padding: 2px;
+  border-radius: 2px;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.matrix-input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color);
+}
