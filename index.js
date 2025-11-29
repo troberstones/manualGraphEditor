@@ -66,6 +66,8 @@ var canvasOffsetX = 0;
 var canvasOffsetY = 0;
 var lastMouseX = 0;
 var lastMouseY = 0;
+var bindingSelectionMode = false;
+var currentBindingProperty = null;
 
 // rdlObject class
 function RdlObject() {
@@ -143,7 +145,6 @@ function drawRdlObject(object) {
         ctx.lineWidth = 2;
         ctx.strokeRect(drawX, drawY, nodeWidth, nodeHeight);
     }
-    console.log("Drawing object: " + object.name);
     ctx.fillRect(drawX, drawY, nodeWidth, nodeHeight);
     ctx.font = "12px Arial";
     ctx.textAlign = "center";
@@ -203,13 +204,23 @@ function setupMouseEvents() {
         }
 
         if (clickedObject) {
-            selectedObject = clickedObject;
-            isDragging = true;
-            dragOffsetX = worldX - selectedObject.x;
-            dragOffsetY = worldY - selectedObject.y;
-            populateRightPropertyEditor();
+            if (bindingSelectionMode) {
+                createNodeConnection(selectedObject, currentBindingProperty, clickedObject);
+                bindingSelectionMode = false;
+                currentBindingProperty = null;
+                updatePropertyEditor();
+                resetMousePointer();
+            } else {
+                selectedObject = clickedObject;
+                isDragging = true;
+                dragOffsetX = worldX - selectedObject.x;
+                dragOffsetY = worldY - selectedObject.y;
+                populateRightPropertyEditor();
+            }
         } else {
-            selectedObject = null;
+            if (!bindingSelectionMode) {
+                selectedObject = null;
+            }
             isDraggingCanvas = true;
             lastMouseX = mouseX;
             lastMouseY = mouseY;
@@ -340,6 +351,22 @@ function populateLeftRDLObjectList() {
         renderItems(e.target.value);
     });
 }
+function setMousePointerMode(mode) {
+    switch (mode) {
+        case "bindingSelection":
+            canvas.style.cursor = 'crosshair';
+            break;
+        default:
+            canvas.style.cursor = 'default';
+            break;
+    }
+}
+function resetMousePointer() {
+    canvas.style.cursor = 'default';
+}
+function updatePropertyEditor() {
+    populateRightPropertyEditor();
+}
 //function to populate the right hand column with a property editor for the selected object
 //this funciton should be called when the user selects a node in the graph editor
 function populateRightPropertyEditor() {
@@ -391,7 +418,22 @@ function populateRightPropertyEditor() {
             bindBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 console.log(`Bind clicked for ${key}`);
+                bindingSelectionMode = true;
+                currentBindingProperty = key;
+                setMousePointerMode("bindingSelection");
             });
+            // add a right click option to remove the connection
+            bindBtn.addEventListener('contextmenu', (e) => {
+                e.stopPropagation();
+                console.log(`Remove bind clicked for ${key}`);
+                removeBinding(selectedObject, key);
+            });
+            // Check the connections for this node to see if this attribute is bound
+            const connections = selectedObject.connections;
+            if (connections && connections.hasOwnProperty(key)) {
+                // if its bound, change the shape to a square instead of a circle
+                bindBtn.style.borderRadius = '0';
+            }
             row.appendChild(bindBtn);
         } else {
             // Add spacer so labels align
@@ -655,6 +697,9 @@ function populateRightPropertyEditor() {
 }
 function createNodeConnection(node, attributeName, sourceNode) {
     node.connections[attributeName] = new NodeConnection(attributeName, sourceNode);
+}
+function removeBinding(node, attributeName) {
+    delete node.connections[attributeName];
 }
 // function to initialize the application
 async function init() {
