@@ -18,19 +18,23 @@ function draw() {
     ctx.lineWidth = 1;
     const gridSize = 50;
 
-    for (let x = 0; x <= canvas.width; x += gridSize) {
-        ctx.beginPath();
+    ctx.beginPath();
+    // Vertical lines
+    let startX = canvasOffsetX % gridSize;
+    if (startX > 0) startX -= gridSize;
+    for (let x = startX; x <= canvas.width; x += gridSize) {
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
-        ctx.stroke();
     }
 
-    for (let y = 0; y <= canvas.height; y += gridSize) {
-        ctx.beginPath();
+    // Horizontal lines
+    let startY = canvasOffsetY % gridSize;
+    if (startY > 0) startY -= gridSize;
+    for (let y = startY; y <= canvas.height; y += gridSize) {
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
-        ctx.stroke();
     }
+    ctx.stroke();
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -54,8 +58,13 @@ var nodeHeight = 50;
 
 var selectedObject = null;
 var isDragging = false;
+var isDraggingCanvas = false;
 var dragOffsetX = 0;
 var dragOffsetY = 0;
+var canvasOffsetX = 0;
+var canvasOffsetY = 0;
+var lastMouseX = 0;
+var lastMouseY = 0;
 
 // rdlObject class
 function RdlObject() {
@@ -85,8 +94,8 @@ async function readJsonFile(filename) {
 function createRdlObject(object) {
     // the new object should be initialized with a position that is centerd in the canvas. The canvas is scrollabel so we need to compute the active center
     // the active center needs to be relative to the current canvas offset
-    var activeCenterX = canvas.width / 2 - canvas.offsetLeft;
-    var activeCenterY = canvas.height / 2 - canvas.offsetTop;
+    var activeCenterX = (canvas.width / 2) - canvasOffsetX - (nodeWidth / 2);
+    var activeCenterY = (canvas.height / 2) - canvasOffsetY - (nodeHeight / 2);
     object.x = activeCenterX;
     object.y = activeCenterY;
     listOfObjects.push(object);
@@ -100,26 +109,27 @@ function createRdlObject(object) {
 // - [draw the connections ]
 // - [draw the connection handles ]
 function drawRdlObject(object) {
+    const drawX = object.x + canvasOffsetX;
+    const drawY = object.y + canvasOffsetY;
 
     // if selected, then draw a light outline around the object.
     ctx.fillStyle = "#333";
     if (object === selectedObject) {
         ctx.strokeStyle = "#b3acacff";
         ctx.lineWidth = 2;
-        ctx.strokeRect(object.x, object.y, nodeWidth, nodeHeight);
+        ctx.strokeRect(drawX, drawY, nodeWidth, nodeHeight);
     }
     console.log("Drawing object: " + object.name);
-    ctx.fillRect(object.x, object.y, nodeWidth, nodeHeight);
+    ctx.fillRect(drawX, drawY, nodeWidth, nodeHeight);
     ctx.font = "12px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#fff";
-    ctx.fillText(object.name, object.x + nodeWidth / 2, object.y + nodeHeight / 2);
+    ctx.fillText(object.name, drawX + nodeWidth / 2, drawY + nodeHeight / 2);
 }
 // refreshTheCanvas function to clear the canvas and redraw all the objects
 function refreshTheCanvas() {
     draw();
-    //ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (const object of listOfObjects) {
         drawRdlObject(object);
     }
@@ -135,13 +145,17 @@ function setupMouseEvents() {
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
 
+        // Convert mouse to world space for object checking
+        const worldX = mouseX - canvasOffsetX;
+        const worldY = mouseY - canvasOffsetY;
+
         // Check if we clicked on an object
         // Iterate in reverse order to select the top-most object if they overlap
         let clickedObject = null;
         for (let i = listOfObjects.length - 1; i >= 0; i--) {
             const obj = listOfObjects[i];
-            if (mouseX >= obj.x && mouseX <= obj.x + nodeWidth &&
-                mouseY >= obj.y && mouseY <= obj.y + nodeHeight) {
+            if (worldX >= obj.x && worldX <= obj.x + nodeWidth &&
+                worldY >= obj.y && worldY <= obj.y + nodeHeight) {
                 clickedObject = obj;
                 break;
             }
@@ -150,33 +164,46 @@ function setupMouseEvents() {
         if (clickedObject) {
             selectedObject = clickedObject;
             isDragging = true;
-            dragOffsetX = mouseX - selectedObject.x;
-            dragOffsetY = mouseY - selectedObject.y;
+            dragOffsetX = worldX - selectedObject.x;
+            dragOffsetY = worldY - selectedObject.y;
             populateRightPropertyEditor();
         } else {
             selectedObject = null;
+            isDraggingCanvas = true;
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
         }
         refreshTheCanvas();
     });
 
     canvas.addEventListener('mousemove', function (e) {
-        if (isDragging && selectedObject) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
 
-            selectedObject.x = mouseX - dragOffsetX;
-            selectedObject.y = mouseY - dragOffsetY;
+        if (isDragging && selectedObject) {
+            selectedObject.x = mouseX - canvasOffsetX - dragOffsetX;
+            selectedObject.y = mouseY - canvasOffsetY - dragOffsetY;
+            refreshTheCanvas();
+        } else if (isDraggingCanvas) {
+            const dx = mouseX - lastMouseX;
+            const dy = mouseY - lastMouseY;
+            canvasOffsetX += dx;
+            canvasOffsetY += dy;
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
             refreshTheCanvas();
         }
     });
 
     canvas.addEventListener('mouseup', function (e) {
         isDragging = false;
+        isDraggingCanvas = false;
     });
 
     canvas.addEventListener('mouseleave', function (e) {
         isDragging = false;
+        isDraggingCanvas = false;
     });
 }
 
