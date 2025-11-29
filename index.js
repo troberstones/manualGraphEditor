@@ -77,6 +77,7 @@ function RdlObject() {
     // the width of a node is defined globally.
     this.height = nodeHeight;
     this.connections = null;
+    this.nodeObject = null;
 }
 
 async function readJsonFile(filename) {
@@ -97,8 +98,12 @@ function createRdlObject(object, name) {
     // the active center needs to be relative to the current canvas offset
     var activeCenterX = (canvas.width / 2) - canvasOffsetX - (nodeWidth / 2);
     var activeCenterY = (canvas.height / 2) - canvasOffsetY - (nodeHeight / 2);
-    object.x = activeCenterX;
-    object.y = activeCenterY;
+    var rdlObject = new RdlObject();
+    rdlObject.id = object.id;
+    rdlObject.type = object.type;
+    rdlObject.x = activeCenterX;
+    rdlObject.y = activeCenterY;
+    rdlObject.nodeObject = object;
     tmpName = name;
     if (setOfNames === null) {
         setOfNames = [];
@@ -108,9 +113,9 @@ function createRdlObject(object, name) {
         tmpName = name + "_" + iterCount;
         iterCount++;
     }
+    rdlObject.name = tmpName;
     setOfNames.push(tmpName);
-    object.name = tmpName;
-    listOfObjects.push(object);
+    listOfObjects.push(rdlObject);
 }
 // function to draw an individual rdlObject on the canvas
 // this will need to handel the drawing of the connections, 
