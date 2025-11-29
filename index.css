@@ -273,3 +273,51 @@ footer {
   color: var(--text-secondary);
   font-family: monospace;
 }
+
+.rgb-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border: none;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.rgb-input {
+  width: 40px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid transparent;
+  color: var(--text-primary);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+.rgb-input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color);
+}
+
+.property-select {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid transparent;
+  color: var(--text-primary);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.property-select:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color);
+}

@@ -384,38 +384,109 @@ function populateRightPropertyEditor() {
         row.appendChild(label);
 
         // Input
-        let input;
+        let inputContainer;
         const type = attr.attrType;
 
-        if (type === 'Bool') {
-            input = document.createElement('input');
-            input.type = 'checkbox';
-            input.checked = attr.default === true;
+        if (attr.enum) {
+            // Enum Dropdown
+            inputContainer = document.createElement('select');
+            inputContainer.className = 'property-select';
+
+            // Sort enum keys by value if needed, or just alphabetical
+            // Usually enums are "Label": Value
+            const enumEntries = Object.entries(attr.enum);
+            // Optional: sort by value
+            enumEntries.sort((a, b) => a[1] - b[1]);
+
+            enumEntries.forEach(([enumLabel, enumValue]) => {
+                const option = document.createElement('option');
+                option.value = enumValue;
+                option.textContent = enumLabel;
+                if (enumValue === attr.default) {
+                    option.selected = true;
+                }
+                inputContainer.appendChild(option);
+            });
+        } else if (type === 'Bool') {
+            inputContainer = document.createElement('input');
+            inputContainer.type = 'checkbox';
+            inputContainer.checked = attr.default === true;
         } else if (type === 'Int' || type === 'Float') {
-            input = document.createElement('input');
-            input.type = 'number';
-            input.className = 'property-input';
-            input.value = attr.default !== undefined ? attr.default : 0;
-            if (type === 'Float') input.step = '0.1';
-        } else if (type === 'Rgb' || type === 'Vec3f') {
-            input = document.createElement('div');
-            input.className = 'property-value-display';
-            input.textContent = Array.isArray(attr.default) ? `[${attr.default.map(n => n.toFixed(2)).join(', ')}]` : 'Vec3';
-        } else if (type === 'Vec2f') {
-            input = document.createElement('div');
-            input.className = 'property-value-display';
-            input.textContent = Array.isArray(attr.default) ? `[${attr.default.map(n => n.toFixed(2)).join(', ')}]` : 'Vec2';
+            inputContainer = document.createElement('input');
+            inputContainer.type = 'number';
+            inputContainer.className = 'property-input';
+            inputContainer.value = attr.default !== undefined ? attr.default : 0;
+            if (type === 'Float') inputContainer.step = '0.1';
+        } else if (type === 'Rgb') {
+            // Color Swatch + RGB Inputs
+            inputContainer = document.createElement('div');
+            inputContainer.className = 'rgb-container';
+
+            const defaultColor = Array.isArray(attr.default) ? attr.default : [1.0, 1.0, 1.0];
+
+            // Helper to convert 0-1 float to 0-255 int
+            const to255 = (v) => Math.min(255, Math.max(0, Math.round(v * 255)));
+            // Helper to convert RGB to Hex
+            const rgbToHex = (r, g, b) => {
+                return "#" + [r, g, b].map(x => {
+                    const hex = to255(x).toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                }).join('');
+            };
+
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.className = 'color-swatch';
+            colorInput.value = rgbToHex(defaultColor[0], defaultColor[1], defaultColor[2]);
+
+            inputContainer.appendChild(colorInput);
+
+            // R, G, B inputs
+            ['R', 'G', 'B'].forEach((channel, idx) => {
+                const numInput = document.createElement('input');
+                numInput.type = 'number';
+                numInput.className = 'rgb-input';
+                numInput.step = '0.01';
+                numInput.value = defaultColor[idx].toFixed(3); // Display nicely
+                numInput.title = channel;
+                inputContainer.appendChild(numInput);
+
+                // Update color swatch when number changes (simple one-way binding for now)
+                numInput.addEventListener('input', () => {
+                    const r = parseFloat(inputContainer.children[1].value) || 0;
+                    const g = parseFloat(inputContainer.children[2].value) || 0;
+                    const b = parseFloat(inputContainer.children[3].value) || 0;
+                    colorInput.value = rgbToHex(r, g, b);
+                });
+            });
+
+            // Update numbers when swatch changes
+            colorInput.addEventListener('input', (e) => {
+                const hex = e.target.value;
+                const r = parseInt(hex.substr(1, 2), 16) / 255;
+                const g = parseInt(hex.substr(3, 2), 16) / 255;
+                const b = parseInt(hex.substr(5, 2), 16) / 255;
+
+                inputContainer.children[1].value = r.toFixed(3);
+                inputContainer.children[2].value = g.toFixed(3);
+                inputContainer.children[3].value = b.toFixed(3);
+            });
+
+        } else if (type === 'Vec3f' || type === 'Vec2f') {
+            inputContainer = document.createElement('div');
+            inputContainer.className = 'property-value-display';
+            inputContainer.textContent = Array.isArray(attr.default) ? `[${attr.default.map(n => n.toFixed(2)).join(', ')}]` : type;
         } else {
-            input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'property-input';
+            inputContainer = document.createElement('input');
+            inputContainer.type = 'text';
+            inputContainer.className = 'property-input';
             // Handle if default is an object or array (though usually String is string)
             let val = attr.default !== undefined ? attr.default : '';
             if (typeof val === 'object') val = JSON.stringify(val);
-            input.value = val;
+            inputContainer.value = val;
         }
 
-        row.appendChild(input);
+        row.appendChild(inputContainer);
         contentArea.appendChild(row);
     });
 }
