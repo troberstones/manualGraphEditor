@@ -92,7 +92,8 @@ header {
 /* Main Canvas Area */
 main {
   grid-area: main;
-  background-color: #0f0f0f; /* Slightly darker for canvas contrast */
+  background-color: #0f0f0f;
+  /* Slightly darker for canvas contrast */
   position: relative;
   overflow: hidden;
   display: flex;
@@ -137,4 +138,70 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* Search Bar */
+.search-container {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color);
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Object List Items */
+.object-list-item {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border-left: 2px solid transparent;
+  display: flex;
+  align-items: center;
+}
+
+.object-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  padding-left: 1.2rem;
+  /* Subtle movement effect */
+}
+
+.object-list-item.selected {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--accent-color);
+  border-left-color: var(--accent-color);
+}
+
+/* Ensure sidebar content doesn't have too much padding that conflicts with list */
+.sidebar-content {
+  padding: 0;
+  /* Remove padding to let items span full width */
+}
+
+.sidebar-content p {
+  padding: 1rem;
 }

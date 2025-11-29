@@ -64,11 +64,17 @@ function RdlObject() {
     this.connections = null;
 }
 
-function readJsonFile(filename) {
-    const file = new File(filename);
-    const text = file.readText();
-    const json = JSON.parse(text);
-    return json;
+async function readJsonFile(filename) {
+    try {
+        const response = await fetch(filename);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (e) {
+        console.error("Could not load JSON file:", filename, e);
+        return null;
+    }
 }
 // function to create an rdlObject from the specified on, and add it to the list of Objects
 function createRdlObject(object) {
@@ -89,7 +95,15 @@ function createRdlObject(object) {
 // - [draw the connections ]
 // - [draw the connection handles ]
 function drawRdlObject(object) {
-
+    draw();
+    console.log("Drawing object: " + object.name);
+    ctx.fillStyle = "#333";
+    ctx.fillRect(object.x, object.y, nodeWidth, nodeHeight);
+    ctx.fillStyle = "#b3acacff";
+    ctx.font = "12px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(object.name, object.x + nodeWidth / 2, object.y + nodeHeight / 2);
 }
 // refreshTheCanvas function to clear the canvas and redraw all the objects
 function refreshTheCanvas() {
@@ -104,15 +118,98 @@ function refreshTheCanvas() {
 // TODO:
 // - [handle mouse events ]
 function handleMouseEvents() {
+    // when the user clickes in the canvas, check to see if the mouse click intersects any of the list of objects
+    // if it does, select that object
+    // if it doesn't, clear the selection
+    // when the user drags the mouse, move the selected object
+    // when the user releases the mouse, clear the selection
 
 }
 
 //function to populate the left hand column with a list of the objects from the rdl2Objects.json file
+//function to populate the left hand column with a list of the objects from the rdl2Objects.json file
 function populateLeftRDLObjectList() {
-    //add a list of the objects from the rdl2Objects.json file to the left hand column  
-    //this list should be searchable with a fuzzy logic search to make it easy to fine the items in the list
-    //the list should be sortable by name
-    //the list should be scrollable if there are too many items to fit on the screen
+    if (!rdl2Objects || !rdl2Objects.scene_classes) {
+        console.warn("No RDL objects found to populate list.");
+        return;
+    }
+
+    const objectListSidebar = document.getElementById('objectList');
+    const contentArea = objectListSidebar.querySelector('.sidebar-content');
+
+    // Clear existing content
+    contentArea.innerHTML = '';
+
+    // Create Search Bar
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'search-input';
+    searchInput.placeholder = 'Search objects...';
+
+    searchContainer.appendChild(searchInput);
+
+    // Remove existing search container if any (to prevent duplicates)
+    const existingSearch = objectListSidebar.querySelector('.search-container');
+    if (existingSearch) {
+        existingSearch.remove();
+    }
+
+    // Insert after header
+    const header = objectListSidebar.querySelector('.sidebar-header');
+    header.after(searchContainer);
+
+    // Get list of objects and sort them
+    const objectNames = Object.keys(rdl2Objects.scene_classes).sort((a, b) => a.localeCompare(b));
+
+    // Create list container
+    const listContainer = document.createElement('div');
+    listContainer.className = 'object-list';
+    contentArea.appendChild(listContainer);
+
+    // Function to render list items
+    function renderItems(filter = '') {
+        listContainer.innerHTML = '';
+        const lowerFilter = filter.toLowerCase();
+
+        objectNames.forEach(name => {
+            if (name.toLowerCase().includes(lowerFilter)) {
+                const item = document.createElement('div');
+                item.className = 'object-list-item';
+                item.textContent = name;
+
+                item.addEventListener('click', () => {
+                    // Deselect others
+                    const selected = listContainer.querySelectorAll('.selected');
+                    selected.forEach(el => el.classList.remove('selected'));
+                    item.classList.add('selected');
+
+                    console.log('Selected object type:', name);
+                });
+
+                listContainer.appendChild(item);
+            }
+        });
+
+        if (listContainer.children.length === 0) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.style.padding = '1rem';
+            emptyMsg.style.color = 'var(--text-secondary)';
+            emptyMsg.style.fontStyle = 'italic';
+            emptyMsg.textContent = 'No matching objects found';
+            listContainer.appendChild(emptyMsg);
+        }
+    }
+
+    // Initial render
+    renderItems();
+
+    // Search event listener
+    searchInput.addEventListener('input', (e) => {
+        renderItems(e.target.value);
+    });
 }
 //function to populate the right hand column with a property editor for the selected object
 //this funciton should be called when the user selects a node in the graph editor
@@ -124,11 +221,12 @@ function handleSelection() {
 
 }
 // function to initialize the application
-function init() {
+// function to initialize the application
+async function init() {
     listOfObjects = [];
-    rdl2Objects = readJsonFile("rdl2Objects.json");
-    canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
+    rdl2Objects = await readJsonFile("rdl2Objects.json");
+    //canvas = document.getElementById("canvas");
+    //ctx = canvas.getContext("2d");
 
     // create a test object
     var testObject = new RdlObject();
@@ -140,4 +238,12 @@ function init() {
     createRdlObject(testObject);
 
     refreshTheCanvas();
+
+    // Populate the list
+    if (rdl2Objects) {
+        populateLeftRDLObjectList();
+    }
 }
+
+// Initialize when DOM is ready
+window.addEventListener('DOMContentLoaded', init);
