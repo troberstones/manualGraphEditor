@@ -359,7 +359,7 @@ function populateRightPropertyEditor() {
         const row = document.createElement('div');
         row.className = 'property-row';
 
-        // Bindable button
+        // Bindable button or spacer
         if (attr.bindable) {
             const bindBtn = document.createElement('button');
             bindBtn.className = 'bind-button';
@@ -381,9 +381,8 @@ function populateRightPropertyEditor() {
         label.className = 'property-label';
         label.textContent = attr.metadata && attr.metadata.label ? attr.metadata.label : key;
         label.title = key; // Tooltip with full key
-        row.appendChild(label);
 
-        // Input
+        // Generate Input Container
         let inputContainer;
         const type = attr.attrType;
 
@@ -392,10 +391,7 @@ function populateRightPropertyEditor() {
             inputContainer = document.createElement('select');
             inputContainer.className = 'property-select';
 
-            // Sort enum keys by value if needed, or just alphabetical
-            // Usually enums are "Label": Value
             const enumEntries = Object.entries(attr.enum);
-            // Optional: sort by value
             enumEntries.sort((a, b) => a[1] - b[1]);
 
             enumEntries.forEach(([enumLabel, enumValue]) => {
@@ -423,10 +419,7 @@ function populateRightPropertyEditor() {
             inputContainer.className = 'rgb-container';
 
             const defaultColor = Array.isArray(attr.default) ? attr.default : [1.0, 1.0, 1.0];
-
-            // Helper to convert 0-1 float to 0-255 int
             const to255 = (v) => Math.min(255, Math.max(0, Math.round(v * 255)));
-            // Helper to convert RGB to Hex
             const rgbToHex = (r, g, b) => {
                 return "#" + [r, g, b].map(x => {
                     const hex = to255(x).toString(16);
@@ -441,17 +434,15 @@ function populateRightPropertyEditor() {
 
             inputContainer.appendChild(colorInput);
 
-            // R, G, B inputs
             ['R', 'G', 'B'].forEach((channel, idx) => {
                 const numInput = document.createElement('input');
                 numInput.type = 'number';
                 numInput.className = 'rgb-input';
                 numInput.step = '0.01';
-                numInput.value = defaultColor[idx].toFixed(3); // Display nicely
+                numInput.value = defaultColor[idx].toFixed(3);
                 numInput.title = channel;
                 inputContainer.appendChild(numInput);
 
-                // Update color swatch when number changes (simple one-way binding for now)
                 numInput.addEventListener('input', () => {
                     const r = parseFloat(inputContainer.children[1].value) || 0;
                     const g = parseFloat(inputContainer.children[2].value) || 0;
@@ -460,7 +451,6 @@ function populateRightPropertyEditor() {
                 });
             });
 
-            // Update numbers when swatch changes
             colorInput.addEventListener('input', (e) => {
                 const hex = e.target.value;
                 const r = parseInt(hex.substr(1, 2), 16) / 255;
@@ -474,11 +464,6 @@ function populateRightPropertyEditor() {
 
         } else if (type === 'Mat4d') {
             // 4x4 Matrix
-            row.style.flexDirection = 'column';
-            row.style.alignItems = 'flex-start';
-            label.style.marginBottom = '4px';
-            label.style.width = '100%';
-
             inputContainer = document.createElement('div');
             inputContainer.className = 'matrix-container';
 
@@ -495,7 +480,6 @@ function populateRightPropertyEditor() {
                     matInput.type = 'number';
                     matInput.className = 'matrix-input';
                     matInput.step = '0.01';
-                    // Check if defaultMatrix[i] exists and has [j]
                     const val = (defaultMatrix[i] && defaultMatrix[i][j] !== undefined) ? defaultMatrix[i][j] : (i === j ? 1 : 0);
                     matInput.value = val;
                     inputContainer.appendChild(matInput);
@@ -523,13 +507,46 @@ function populateRightPropertyEditor() {
             inputContainer = document.createElement('input');
             inputContainer.type = 'text';
             inputContainer.className = 'property-input';
-            // Handle if default is an object or array (though usually String is string)
             let val = attr.default !== undefined ? attr.default : '';
             if (typeof val === 'object') val = JSON.stringify(val);
             inputContainer.value = val;
         }
 
-        row.appendChild(inputContainer);
+        // Layout Logic
+        const isComplex = attr.enum || type === 'Vec3f' || type === 'Vec2f' || type === 'Mat4d' || type === 'Rgb';
+
+        if (isComplex) {
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.width = '100%';
+
+            label.style.marginBottom = '4px';
+            wrapper.appendChild(label);
+
+            if (inputContainer) {
+                // Right align inputs for complex types (except maybe Mat4d which is full width grid)
+                if (type !== 'Mat4d') {
+                    inputContainer.style.width = '100%';
+                    if (inputContainer.style.display !== 'grid') { // Don't override grid
+                        inputContainer.style.display = 'flex';
+                        inputContainer.style.justifyContent = 'flex-end';
+                    }
+                }
+                wrapper.appendChild(inputContainer);
+            }
+
+            // Align row items to top so bind button stays at top
+            row.style.alignItems = 'flex-start';
+            // Add some top padding to bind button to align with label text if needed
+            // But usually flex-start is enough.
+
+            row.appendChild(wrapper);
+        } else {
+            row.appendChild(label);
+            row.appendChild(inputContainer);
+        }
+
         contentArea.appendChild(row);
     });
 }
