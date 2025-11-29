@@ -99,7 +99,7 @@ function createRdlObject(object, name) {
     var activeCenterX = (canvas.width / 2) - canvasOffsetX - (nodeWidth / 2);
     var activeCenterY = (canvas.height / 2) - canvasOffsetY - (nodeHeight / 2);
     var rdlObject = new RdlObject();
-    rdlObject.id = object.id;
+    rdlObject.id = object.id;// todo what do i want to do with the ID?
     rdlObject.type = object.type;
     rdlObject.x = activeCenterX;
     rdlObject.y = activeCenterY;
@@ -319,7 +319,105 @@ function populateLeftRDLObjectList() {
 //function to populate the right hand column with a property editor for the selected object
 //this funciton should be called when the user selects a node in the graph editor
 function populateRightPropertyEditor() {
+    const propertiesSidebar = document.getElementById('properties');
+    const contentArea = propertiesSidebar.querySelector('.sidebar-content');
+    contentArea.innerHTML = ''; // Clear existing content
 
+    if (!selectedObject) {
+        const emptyMsg = document.createElement('p');
+        emptyMsg.style.padding = '1rem';
+        emptyMsg.style.color = 'var(--text-secondary)';
+        emptyMsg.style.fontStyle = 'italic';
+        emptyMsg.textContent = 'Select an object';
+        contentArea.appendChild(emptyMsg);
+        return;
+    }
+
+    const nodeObject = selectedObject.nodeObject;
+    if (!nodeObject || !nodeObject.attributes) {
+        const emptyMsg = document.createElement('p');
+        emptyMsg.style.padding = '1rem';
+        emptyMsg.style.color = 'var(--text-secondary)';
+        emptyMsg.style.fontStyle = 'italic';
+        emptyMsg.textContent = 'No attributes found';
+        contentArea.appendChild(emptyMsg);
+        return;
+    }
+
+    const attributes = nodeObject.attributes;
+    const attributeKeys = Object.keys(attributes);
+
+    // Sort by order if available
+    attributeKeys.sort((a, b) => {
+        const orderA = attributes[a].order !== undefined ? attributes[a].order : 999;
+        const orderB = attributes[b].order !== undefined ? attributes[b].order : 999;
+        return orderA - orderB;
+    });
+
+    attributeKeys.forEach(key => {
+        const attr = attributes[key];
+        const row = document.createElement('div');
+        row.className = 'property-row';
+
+        // Bindable button
+        if (attr.bindable) {
+            const bindBtn = document.createElement('button');
+            bindBtn.className = 'bind-button';
+            bindBtn.title = 'Bind attribute';
+            bindBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                console.log(`Bind clicked for ${key}`);
+            });
+            row.appendChild(bindBtn);
+        } else {
+            // Add spacer so labels align
+            const spacer = document.createElement('div');
+            spacer.className = 'bind-spacer';
+            row.appendChild(spacer);
+        }
+
+        // Label
+        const label = document.createElement('label');
+        label.className = 'property-label';
+        label.textContent = attr.metadata && attr.metadata.label ? attr.metadata.label : key;
+        label.title = key; // Tooltip with full key
+        row.appendChild(label);
+
+        // Input
+        let input;
+        const type = attr.attrType;
+
+        if (type === 'Bool') {
+            input = document.createElement('input');
+            input.type = 'checkbox';
+            input.checked = attr.default === true;
+        } else if (type === 'Int' || type === 'Float') {
+            input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'property-input';
+            input.value = attr.default !== undefined ? attr.default : 0;
+            if (type === 'Float') input.step = '0.1';
+        } else if (type === 'Rgb' || type === 'Vec3f') {
+            input = document.createElement('div');
+            input.className = 'property-value-display';
+            input.textContent = Array.isArray(attr.default) ? `[${attr.default.map(n => n.toFixed(2)).join(', ')}]` : 'Vec3';
+        } else if (type === 'Vec2f') {
+            input = document.createElement('div');
+            input.className = 'property-value-display';
+            input.textContent = Array.isArray(attr.default) ? `[${attr.default.map(n => n.toFixed(2)).join(', ')}]` : 'Vec2';
+        } else {
+            input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'property-input';
+            // Handle if default is an object or array (though usually String is string)
+            let val = attr.default !== undefined ? attr.default : '';
+            if (typeof val === 'object') val = JSON.stringify(val);
+            input.value = val;
+        }
+
+        row.appendChild(input);
+        contentArea.appendChild(row);
+    });
 }
 //function to handle the selection of objects
 function handleSelection() {
