@@ -52,6 +52,7 @@ resizeCanvas();
 // - [add a function to handle mouse events so that the user can click on the box and move it around 
 var rdl2Objects = null;
 var listOfObjects = null; // this contains the objects that have been created in the project.
+var setOfNames = null;
 
 var nodeWidth = 100;
 var nodeHeight = 50;
@@ -91,13 +92,24 @@ async function readJsonFile(filename) {
     }
 }
 // function to create an rdlObject from the specified on, and add it to the list of Objects
-function createRdlObject(object) {
+function createRdlObject(object, name) {
     // the new object should be initialized with a position that is centerd in the canvas. The canvas is scrollabel so we need to compute the active center
     // the active center needs to be relative to the current canvas offset
     var activeCenterX = (canvas.width / 2) - canvasOffsetX - (nodeWidth / 2);
     var activeCenterY = (canvas.height / 2) - canvasOffsetY - (nodeHeight / 2);
     object.x = activeCenterX;
     object.y = activeCenterY;
+    tmpName = name;
+    if (setOfNames === null) {
+        setOfNames = [];
+    }
+    var iterCount = 0;
+    while (setOfNames.includes(tmpName)) {
+        tmpName = name + "_" + iterCount;
+        iterCount++;
+    }
+    setOfNames.push(tmpName);
+    object.name = tmpName;
     listOfObjects.push(object);
 }
 // function to draw an individual rdlObject on the canvas
@@ -270,7 +282,7 @@ function populateLeftRDLObjectList() {
                     // when double clicked, create a new object of this type.
                     if (e.detail === 2) {
                         console.log('Double clicked object type:', name);
-                        createRdlObject(rdl2Objects.scene_classes[name]);
+                        createRdlObject(rdl2Objects.scene_classes[name], name);
                         refreshTheCanvas();
                     } else {
                         console.log('Single clicked object type:', name);
@@ -313,8 +325,6 @@ function handleSelection() {
 async function init() {
     listOfObjects = [];
     rdl2Objects = await readJsonFile("rdl2Objects.json");
-    //canvas = document.getElementById("canvas");
-    //ctx = canvas.getContext("2d");
 
     // create a test object
     var testObject = new RdlObject();
@@ -323,7 +333,7 @@ async function init() {
     testObject.type = "testObject";
     testObject.x = 100;
     testObject.y = 100;
-    createRdlObject(testObject);
+    createRdlObject(testObject, "Test Object");
 
     // create a test object2
     var testObject2 = new RdlObject();
@@ -332,7 +342,7 @@ async function init() {
     testObject2.type = "testObject2";
     testObject2.x = 150;
     testObject.y = 150;
-    createRdlObject(testObject2);
+    createRdlObject(testObject2, "Test Object");
 
     refreshTheCanvas();
 
