@@ -261,13 +261,20 @@ function populateLeftRDLObjectList() {
                 item.className = 'object-list-item';
                 item.textContent = name;
 
-                item.addEventListener('click', () => {
+                item.addEventListener('click', (e) => {
                     // Deselect others
                     const selected = listContainer.querySelectorAll('.selected');
                     selected.forEach(el => el.classList.remove('selected'));
                     item.classList.add('selected');
 
-                    console.log('Selected object type:', name);
+                    // when double clicked, create a new object of this type.
+                    if (e.detail === 2) {
+                        console.log('Double clicked object type:', name);
+                        createRdlObject(rdl2Objects.scene_classes[name]);
+                        refreshTheCanvas();
+                    } else {
+                        console.log('Single clicked object type:', name);
+                    }
                 });
 
                 listContainer.appendChild(item);
