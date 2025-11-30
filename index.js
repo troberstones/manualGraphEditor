@@ -758,6 +758,56 @@ function populateRightPropertyEditor() {
 
                 inputContainer.appendChild(numInput);
             });
+        } else if (type === 'String') {
+            if (attr.filename) {
+                inputContainer = document.createElement('div');
+                inputContainer.className = 'string-container';
+                inputContainer.style.display = 'flex';
+                inputContainer.style.width = '100%';
+                inputContainer.style.gap = '5px';
+
+                const textInput = document.createElement('input');
+                textInput.type = 'text';
+                textInput.className = 'property-input';
+                textInput.style.flexGrow = '1';
+                let val = currentValue !== undefined ? currentValue : '';
+                textInput.value = val;
+
+                textInput.addEventListener('input', (e) => {
+                    updateProperty(e.target.value);
+                });
+
+                const browseBtn = document.createElement('button');
+                browseBtn.textContent = '...';
+                browseBtn.className = 'browse-button';
+                browseBtn.title = 'Browse File';
+                browseBtn.style.padding = '0 10px';
+                browseBtn.style.cursor = 'pointer';
+                browseBtn.style.backgroundColor = '#444';
+                browseBtn.style.color = '#fff';
+                browseBtn.style.border = '1px solid #555';
+                browseBtn.style.borderRadius = '4px';
+
+                browseBtn.onclick = () => {
+                    fileBrowser.open((path) => {
+                        textInput.value = path;
+                        updateProperty(path);
+                    });
+                };
+
+                inputContainer.appendChild(textInput);
+                inputContainer.appendChild(browseBtn);
+            } else {
+                inputContainer = document.createElement('input');
+                inputContainer.type = 'text';
+                inputContainer.className = 'property-input';
+                let val = currentValue !== undefined ? currentValue : '';
+                inputContainer.value = val;
+
+                inputContainer.addEventListener('input', (e) => {
+                    updateProperty(e.target.value);
+                });
+            }
         } else {
             inputContainer = document.createElement('input');
             inputContainer.type = 'text';
