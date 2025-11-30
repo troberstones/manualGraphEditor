@@ -1,0 +1,1 @@
+[{"name": "Test Base Material", "type": "Material", "x": 95, "y": 300.5, "connections": {"diffuse_color": {"attributeName": "diffuse_color", "sourceNodeName": "Test BlendMap"}}, "editedProperties": {}}, {"name": "Test BlendMap", "type": "Map", "x": 58, "y": 223.5, "connections": {}, "editedProperties": {}}]

@@ -903,6 +903,57 @@ function setupFileMenu() {
 }
 
 // function to initialize the application
+function setupRenderMenu() {
+    const renderMenu = document.getElementById('menu-render');
+    if (renderMenu) {
+        renderMenu.addEventListener('click', () => {
+            if (!listOfObjects || listOfObjects.length === 0) {
+                console.warn("No objects to render");
+                alert("No objects to render");
+                return;
+            }
+
+            const simplifiedObjects = listOfObjects.map(obj => {
+                const connections = {};
+                for (const key in obj.connections) {
+                    connections[key] = {
+                        attributeName: obj.connections[key].attributeName,
+                        sourceNodeName: obj.connections[key].sourceNode.name
+                    };
+                }
+
+                return {
+                    id: obj.id,
+                    name: obj.name,
+                    type: obj.type,
+                    x: obj.x,
+                    y: obj.y,
+                    connections: connections,
+                    editedProperties: obj.editedProperties
+                };
+            });
+
+            fetch('/writeRdla2File', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(simplifiedObjects)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Render command sent successfully!');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Error sending render command.');
+                });
+        });
+    }
+}
+
+// function to initialize the application
 async function init() {
     listOfObjects = [];
     rdl2Objects = await readJsonFile("rdl2Objects.json");
@@ -921,6 +972,7 @@ async function init() {
     setupMouseEvents();
     setupContextMenu();
     setupFileMenu();
+    setupRenderMenu();
 }
 
 // Initialize when DOM is ready
