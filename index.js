@@ -564,7 +564,9 @@ function populateRightPropertyEditor() {
         const label = document.createElement('label');
         label.className = 'property-label';
         label.textContent = attr.metadata && attr.metadata.label ? attr.metadata.label : key;
-        label.title = key; // Tooltip with full key
+        label.title = (attr.metadata && attr.metadata.comment) ? attr.metadata.comment :
+            (attr.metadata && attr.metadata.label) ? attr.metadata.label :
+                attr.attrType;
         if (hasEditedValue) {
             label.style.color = 'orange';
         }
