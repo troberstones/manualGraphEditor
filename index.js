@@ -5,8 +5,10 @@ const mainContainer = document.querySelector('main');
 function resizeCanvas() {
     canvas.width = mainContainer.clientWidth;
     canvas.height = mainContainer.clientHeight;
-    draw();
+    refreshTheCanvas();
 }
+
+
 
 function draw() {
     // Clear background
@@ -171,9 +173,11 @@ function drawConnections(object) {
 // refreshTheCanvas function to clear the canvas and redraw all the objects
 function refreshTheCanvas() {
     draw();
-    for (const object of listOfObjects) {
-        drawRdlObject(object);
-        drawConnections(object);
+    if (listOfObjects) {
+        for (const object of listOfObjects) {
+            drawRdlObject(object);
+            drawConnections(object);
+        }
     }
 }
 // function to handle mouse events
