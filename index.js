@@ -789,10 +789,31 @@ function populateRightPropertyEditor() {
                 browseBtn.style.borderRadius = '4px';
 
                 browseBtn.onclick = () => {
+                    let extensions = [];
+                    if (attr.metadata && attr.metadata.comment) {
+                        const comment = attr.metadata.comment;
+                        // Find extensions like .exr, .tx
+                        const extMatches = comment.match(/\.[a-zA-Z0-9]{2,4}\b/g);
+                        if (extMatches) {
+                            extensions = extensions.concat(extMatches);
+                        }
+                        // Check for USD
+                        if (comment.toLowerCase().includes("usd")) {
+                            extensions.push(".usd", ".usda", ".usdc", ".usdz");
+                        }
+                        // Check for VDB
+                        if (comment.toLowerCase().includes("vdb")) {
+                            extensions.push(".vdb");
+                        }
+                    }
+                    // Deduplicate extensions
+                    extensions = [...new Set(extensions)];
+                    const fileTypes = extensions.length > 0 ? extensions : 'all';
+
                     fileBrowser.open((path) => {
                         textInput.value = path;
                         updateProperty(path);
-                    });
+                    }, '.', fileTypes);
                 };
 
                 inputContainer.appendChild(textInput);

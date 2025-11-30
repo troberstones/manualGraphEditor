@@ -31,13 +31,29 @@ def fileBrowser(startDirectory, filetype):
             
         directory = os.getcwd()
         directories = [os.path.join(directory, "."), os.path.join(directory, "..")]
+        
+        # Normalize filetype to a list of lowercase extensions
+        if isinstance(filetype, str):
+            if filetype == "all":
+                extensions = None
+            else:
+                extensions = [filetype.lower()]
+        elif isinstance(filetype, list):
+            extensions = [ext.lower() for ext in filetype]
+        else:
+            extensions = None
+
         for file in os.listdir(directory):
             isDir = os.path.isdir(os.path.join(directory, file))
             if isDir:
                 directories.append(os.path.join(directory, file))
             else:
-                if file.endswith(filetype) or filetype == "all":
+                if extensions is None:
                     files.append(os.path.join(directory, file))
+                else:
+                    file_lower = file.lower()
+                    if any(file_lower.endswith(ext) for ext in extensions):
+                        files.append(os.path.join(directory, file))
         #json encode the files
         return json.dumps({"files": files, "directories": directories, "currentDirectory": directory})
     finally:
