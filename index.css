@@ -241,6 +241,14 @@ footer {
   flex-shrink: 0;
 }
 
+.bound-property-row {
+  background-color: rgba(230, 82, 8, 0.394);
+}
+
+.bound-property-row:hover {
+  background-color: rgba(230, 226, 8, 0.394);
+}
+
 .property-label {
   flex: 1;
   color: var(--text-secondary);

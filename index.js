@@ -472,7 +472,14 @@ function populateRightPropertyEditor() {
     attributeKeys.forEach(key => {
         const attr = attributes[key];
         const row = document.createElement('div');
-        row.className = 'property-row';
+
+        const isBound = selectedObject.connections && selectedObject.connections.hasOwnProperty(key);
+        // if its bound add a new class to the dif on top of 
+        // property-row so that it shows a lighter background for bound attributes
+        row.classList.add('property-row');
+        if (isBound) {
+            row.classList.add('bound-property-row');
+        }
 
         // Bindable button or spacer
         if (attr.bindable) {
@@ -496,7 +503,7 @@ function populateRightPropertyEditor() {
                 // if its bound add a new class to the dif on top of 
                 // property-row so that it shows a lighter background for bound attributes
                 if (isBound) {
-                    row.classList.add('bound');
+                    row.className = 'bound-property-row';
                 }
                 const options = [
                     {
