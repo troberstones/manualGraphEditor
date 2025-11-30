@@ -369,6 +369,70 @@ function updatePropertyEditor() {
 }
 //function to populate the right hand column with a property editor for the selected object
 //this funciton should be called when the user selects a node in the graph editor
+
+// Context Menu Logic
+let contextMenu = null;
+
+function setupContextMenu() {
+    if (contextMenu) return;
+    contextMenu = document.createElement('div');
+    contextMenu.className = 'context-menu';
+    document.body.appendChild(contextMenu);
+
+    // Hide on global click
+    window.addEventListener('click', () => {
+        if (contextMenu) contextMenu.style.display = 'none';
+    });
+
+    // Hide on context menu elsewhere (optional, but prevents double menus)
+    window.addEventListener('contextmenu', (e) => {
+        if (!e.target.closest('.bind-button')) {
+            if (contextMenu) contextMenu.style.display = 'none';
+        }
+    });
+}
+
+function showContextMenu(x, y, options) {
+    if (!contextMenu) setupContextMenu();
+
+    contextMenu.innerHTML = '';
+
+    options.forEach(opt => {
+        if (opt.separator) {
+            const sep = document.createElement('div');
+            sep.className = 'context-menu-separator';
+            contextMenu.appendChild(sep);
+        } else {
+            const item = document.createElement('div');
+            item.className = 'context-menu-item';
+            item.textContent = opt.label;
+            if (opt.disabled) {
+                item.classList.add('disabled');
+            } else {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    opt.action();
+                    contextMenu.style.display = 'none';
+                });
+            }
+            contextMenu.appendChild(item);
+        }
+    });
+
+    contextMenu.style.left = `${x}px`;
+    contextMenu.style.top = `${y}px`;
+    contextMenu.style.display = 'block';
+
+    // Adjust if out of bounds
+    const rect = contextMenu.getBoundingClientRect();
+    if (rect.right > window.innerWidth) {
+        contextMenu.style.left = `${window.innerWidth - rect.width - 5}px`;
+    }
+    if (rect.bottom > window.innerHeight) {
+        contextMenu.style.top = `${window.innerHeight - rect.height - 5}px`;
+    }
+}
+
 function populateRightPropertyEditor() {
     const propertiesSidebar = document.getElementById('properties');
     const contentArea = propertiesSidebar.querySelector('.sidebar-content');
@@ -422,11 +486,50 @@ function populateRightPropertyEditor() {
                 currentBindingProperty = key;
                 setMousePointerMode("bindingSelection");
             });
-            // add a right click option to remove the connection
+
+            // Context Menu
             bindBtn.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                console.log(`Remove bind clicked for ${key}`);
-                removeBinding(selectedObject, key);
+
+                const isBound = selectedObject.connections && selectedObject.connections.hasOwnProperty(key);
+                // if its bound add a new class to the dif on top of 
+                // property-row so that it shows a lighter background for bound attributes
+                if (isBound) {
+                    row.classList.add('bound');
+                }
+                const options = [
+                    {
+                        label: "Unbind",
+                        disabled: !isBound,
+                        action: () => {
+                            console.log(`Remove bind clicked for ${key}`);
+                            removeBinding(selectedObject, key);
+                            // Refresh UI to show circle again
+                            updatePropertyEditor();
+                            refreshTheCanvas();
+                        }
+                    },
+                    {
+                        label: "Create Connection",
+                        action: () => {
+                            console.log(`Create Connection clicked for ${key}`);
+                            bindingSelectionMode = true;
+                            currentBindingProperty = key;
+                            setMousePointerMode("bindingSelection");
+                        }
+                    },
+                    {
+                        label: "Connect to...",
+                        action: () => {
+                            console.log(`Connect to... clicked for ${key}`);
+                            // Placeholder for future functionality
+                            alert("Connect to... feature coming soon!");
+                        }
+                    }
+                ];
+
+                showContextMenu(e.clientX, e.clientY, options);
             });
             // Check the connections for this node to see if this attribute is bound
             const connections = selectedObject.connections;
@@ -718,6 +821,7 @@ async function init() {
     }
 
     setupMouseEvents();
+    setupContextMenu();
 }
 
 // Initialize when DOM is ready
