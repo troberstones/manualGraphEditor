@@ -815,6 +815,20 @@ function createNodeConnection(node, attributeName, sourceNode) {
 function removeBinding(node, attributeName) {
     delete node.connections[attributeName];
 }
+
+function setupFileMenu() {
+    const fileMenu = document.getElementById('menu-file');
+    if (fileMenu) {
+        fileMenu.addEventListener('click', () => {
+            fileBrowser.open((path) => {
+                console.log("File selected:", path);
+                // TODO: Handle the selected file (e.g., load it)
+                alert(`Selected file: ${path}`);
+            });
+        });
+    }
+}
+
 // function to initialize the application
 async function init() {
     listOfObjects = [];
@@ -833,6 +847,7 @@ async function init() {
 
     setupMouseEvents();
     setupContextMenu();
+    setupFileMenu();
 }
 
 // Initialize when DOM is ready
