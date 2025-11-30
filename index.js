@@ -822,7 +822,7 @@ function populateRightPropertyEditor() {
         }
 
         // Layout Logic
-        const isComplex = attr.enum || type === 'Vec3f' || type === 'Vec2f' || type === 'Mat4d' || type === 'Rgb';
+        const isComplex = attr.enum || type === 'Vec3f' || type === 'Vec2f' || type === 'Mat4d' || type === 'Rgb' || (type === 'String' && attr.filename);
 
         if (isComplex) {
             const wrapper = document.createElement('div');
