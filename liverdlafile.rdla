@@ -1,0 +1,10 @@
+Material("Test Base Material") {
+    ["diffuse_color"] = Map("Test BlendMap"),
+}
+
+Map("Test BlendMap") {
+}
+
+Geometry("UsdGeometry") {
+    ["stage"] = "/Users/chrisharvey/Documents/manualGraphEditor/foousd.usdc",
+}

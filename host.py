@@ -7,16 +7,127 @@ import os
 import json
 import http.server
 import socketserver
+from pxr import Usd, UsdGeom
 
 PORT = 8011
 rld2ObjectStorage = None
+rdl2_schema = None
+
+def getUsdGeometryPrims(usdFilePath):
+    stage = Usd.Stage.Open(usdFilePath)
+    geometryPrims = [x.GetPath() for x in stage.Traverse() if x.IsA(UsdGeom.Gprim)]
+    return geometryPrims
+
+def loadRdl2Schema():
+    global rdl2_schema
+    if rdl2_schema is None:
+        try:
+            with open('rdl2Objects.json', 'r') as f:
+                rdl2_schema = json.load(f)
+        except Exception as e:
+            print(f"Error loading rdl2Objects.json: {e}")
+            rdl2_schema = {}
+
+def formatValue(value, attrType):
+    if attrType == 'String':
+        return f'"{value}"'
+    elif attrType == 'Bool':
+        return 'true' if value else 'false'
+    elif attrType in ['Int', 'Float']:
+        return str(value)
+    elif attrType == 'Rgb':
+        return f'Rgb({value[0]}, {value[1]}, {value[2]})'
+    elif attrType == 'Rgba':
+        return f'Rgba({value[0]}, {value[1]}, {value[2]}, {value[3]})'
+    elif attrType == 'Vec2f':
+        return f'Vec2({value[0]}, {value[1]})'
+    elif attrType == 'Vec3f':
+        return f'Vec3({value[0]}, {value[1]}, {value[2]})'
+    elif attrType == 'Mat4d':
+        # Flatten if it's 4x4 list of lists
+        if isinstance(value[0], list):
+            vals = [str(v) for row in value for v in row]
+        else:
+            vals = [str(v) for v in value]
+        return f'Mat4({", ".join(vals)})'
+    elif attrType == 'Enum':
+        return str(value)
+    else:
+        return str(value)
 
 #there needs to be a function that will take the listOfObjects json data and writes out a rdla2 file
 def writeRdla2File(listOfObjects):
     global rld2ObjectStorage
     rld2ObjectStorage = listOfObjects
-    with open('liverdlafile.rdl2', 'w') as f:
-        json.dump(rld2ObjectStorage, f)
+    
+    loadRdl2Schema()
+    scene_classes = rdl2_schema.get('scene_classes', {})
+    
+    # Build name to type map
+    name_to_type = {obj['name']: obj['type'] for obj in listOfObjects}
+    
+    output_lines = []
+    
+    for obj in listOfObjects:
+        objType = obj['type']
+        objName = obj['name']
+        connections = obj.get('connections', {})
+        editedProperties = obj.get('editedProperties', {})
+        
+        classSchema = scene_classes.get(objType, {})
+        attributesSchema = classSchema.get('attributes', {})
+        
+        if objType == 'SceneVariables':
+            line = f'SceneVariables {{'
+        else:
+            line = f'{objType}("{objName}") {{'
+        
+        output_lines.append(line)
+        
+        # Collect all attributes to write
+        all_keys = set(editedProperties.keys()) | set(connections.keys())
+        
+        for attrName in all_keys:
+            attrSchema = attributesSchema.get(attrName, {})
+            attrType = attrSchema.get('attrType', 'String')
+            isBindable = attrSchema.get('bindable', False)
+            
+            valString = ""
+            
+            if attrName in connections:
+                sourceNodeName = connections[attrName]['sourceNodeName']
+                sourceType = name_to_type.get(sourceNodeName)
+                
+                if sourceType:
+                    sourceRef = f'{sourceType}("{sourceNodeName}")'
+                else:
+                    sourceRef = f'"{sourceNodeName}"'
+                
+                if isBindable:
+                    # It's a binding: bind(Map, BaseValue)
+                    if attrName in editedProperties:
+                        baseVal = editedProperties[attrName]
+                    else:
+                        baseVal = attrSchema.get('default')
+                        if baseVal is None:
+                             if attrType == 'Rgb': baseVal = [0,0,0]
+                             elif attrType == 'Float': baseVal = 0.0
+                    
+                    baseValStr = formatValue(baseVal, attrType)
+                    valString = f'bind({sourceRef}, {baseValStr})'
+                else:
+                    valString = sourceRef
+            else:
+                val = editedProperties[attrName]
+                valString = formatValue(val, attrType)
+            
+            output_lines.append(f'    ["{attrName}"] = {valString},')
+            
+        output_lines.append('}')
+        output_lines.append('')
+        
+    with open('liverdlafile.rdla', 'w') as f:
+        f.write('\n'.join(output_lines))
 
 # starting with a specified directory, return a list of the files in JSON format  and send it to the webpage so that it can provide a file fileBrowser
 def fileBrowser(startDirectory, filetype):
