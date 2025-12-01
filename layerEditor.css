@@ -1,0 +1,46 @@
+.layer-editor {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 10px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+}
+
+.layer-editor-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    min-width: 600px;
+    /* Ensure it doesn't get too squashed */
+}
+
+.layer-editor-table th,
+.layer-editor-table td {
+    border: 1px solid var(--border-color);
+    padding: 4px 8px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.layer-editor-table th {
+    background-color: rgba(255, 255, 255, 0.05);
+    font-weight: 600;
+}
+
+.layer-editor-table input {
+    width: 100%;
+    min-width: 80px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.layer-editor-table input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure context menu from index.css works or override if needed */

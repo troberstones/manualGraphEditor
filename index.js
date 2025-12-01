@@ -75,6 +75,7 @@ var currentBindingProperty = null;
 function RdlObject() {
     this.id = null;
     this.name = null;
+    this.className = null;
     this.type = null;
     this.x = null;
     this.y = null;
@@ -122,6 +123,7 @@ function createRdlObject(object, name) {
         tmpName = name + "_" + iterCount;
         iterCount++;
     }
+    rdlObject.className = object.class_name;
     rdlObject.name = tmpName;
     setOfNames.push(tmpName);
     listOfObjects.push(rdlObject);
@@ -881,6 +883,10 @@ function populateRightPropertyEditor() {
 
         contentArea.appendChild(row);
     });
+
+    if (selectedObject.className === 'Layer') {
+        createLayerEditor(contentArea, selectedObject);
+    }
 }
 function createNodeConnection(node, attributeName, sourceNode) {
     node.connections[attributeName] = new NodeConnection(attributeName, sourceNode);
@@ -957,10 +963,17 @@ function setupRenderMenu() {
 async function init() {
     listOfObjects = [];
     rdl2Objects = await readJsonFile("rdl2Objects.json");
+    Object.keys(rdl2Objects.scene_classes).forEach(key => {
+        rdl2Objects.scene_classes[key].class_name = key;
+    });
     // create a rdl2 BaseMaterial object
     var baseMaterial = createRdlObject(rdl2Objects.scene_classes["BaseMaterial"], "Test Base Material");
     var blendMap = createRdlObject(rdl2Objects.scene_classes["BlendMap"], "Test BlendMap");
     createNodeConnection(baseMaterial, "diffuse_color", blendMap);
+    createRdlObject(rdl2Objects.scene_classes["Layer"], "Test Layer");
+    createRdlObject(rdl2Objects.scene_classes["BoxGeometry"], "Box");
+    createRdlObject(rdl2Objects.scene_classes["SphereGeometry"], "Sphere");
+    createRdlObject(rdl2Objects.scene_classes["UsdGeometry"], "usdGeometry");
 
     refreshTheCanvas();
 
