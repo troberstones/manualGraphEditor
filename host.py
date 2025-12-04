@@ -56,9 +56,47 @@ def formatValue(value, attrType):
         return str(value)
 
 #there needs to be a function that will take the listOfObjects json data and writes out a rdla2 file
+def topologicalSort(objects):
+    name_to_obj = {obj['name']: obj for obj in objects}
+    adj = {obj['name']: set() for obj in objects}
+    in_degree = {obj['name']: 0 for obj in objects}
+    
+    for obj in objects:
+        objName = obj['name']
+        connections = obj.get('connections', {})
+        for attr, conn in connections.items():
+            sourceName = conn['sourceNodeName']
+            if sourceName in name_to_obj:
+                if objName not in adj[sourceName]:
+                    adj[sourceName].add(objName)
+                    in_degree[objName] += 1
+    
+    queue = [name for name in in_degree if in_degree[name] == 0]
+    queue.sort() # Deterministic order
+    
+    sorted_names = []
+    
+    while queue:
+        u = queue.pop(0)
+        sorted_names.append(u)
+        
+        neighbors = sorted(list(adj[u]))
+        for v in neighbors:
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+                
+    if len(sorted_names) < len(objects):
+        remaining = sorted(list(set(name_to_obj.keys()) - set(sorted_names)))
+        sorted_names.extend(remaining)
+        
+    return [name_to_obj[name] for name in sorted_names]
+
 def writeRdla2File(listOfObjects):
     global rld2ObjectStorage
     rld2ObjectStorage = listOfObjects
+    
+    listOfObjects = topologicalSort(listOfObjects)
     
     loadRdl2Schema()
     scene_classes = rdl2_schema.get('scene_classes', {})
