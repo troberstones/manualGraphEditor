@@ -64,7 +64,7 @@ def writeRdla2File(listOfObjects):
     scene_classes = rdl2_schema.get('scene_classes', {})
     
     # Build name to type map
-    name_to_type = {obj['name']: obj['type'] for obj in listOfObjects}
+    name_to_type = {obj['name']: obj['className'] for obj in listOfObjects}
     
     output_lines = []
     
@@ -87,6 +87,31 @@ def writeRdla2File(listOfObjects):
         # Collect all attributes to write
         all_keys = set(editedProperties.keys()) | set(connections.keys())
         
+        if objType == 'Layer':
+            geometries = editedProperties.get('geometries', [])
+            surface_shaders = editedProperties.get('surface_shaders', [])
+            parts = editedProperties.get('parts', [])
+            light_sets = editedProperties.get('lightSet', [])
+            
+            if not isinstance(geometries, list): geometries = []
+            if not isinstance(surface_shaders, list): surface_shaders = []
+            if not isinstance(parts, list): parts = []
+            if not isinstance(light_sets, list): light_sets = []
+            
+            max_len = len(geometries)
+            for i in range(max_len):
+                geo = geometries[i]
+                mat = surface_shaders[i] if i < len(surface_shaders) else '""'
+                part = parts[i] if i < len(parts) else '""'
+                light_set = light_sets[i] if i < len(light_sets) else '""'
+                
+                output_lines.append(f'    {{{geo}, {part}, {mat}, {light_set}}},')
+            
+            all_keys.discard('geometries')
+            all_keys.discard('surface_shaders')
+            all_keys.discard('parts')
+            all_keys.discard('lightSet')
+        
         for attrName in all_keys:
             attrSchema = attributesSchema.get(attrName, {})
             attrType = attrSchema.get('attrType', 'String')
@@ -96,10 +121,10 @@ def writeRdla2File(listOfObjects):
             
             if attrName in connections:
                 sourceNodeName = connections[attrName]['sourceNodeName']
-                sourceType = name_to_type.get(sourceNodeName)
+                className = name_to_type.get(sourceNodeName)
                 
-                if sourceType:
-                    sourceRef = f'{sourceType}("{sourceNodeName}")'
+                if className:
+                    sourceRef = f'{className}("{sourceNodeName}")'
                 else:
                     sourceRef = f'"{sourceNodeName}"'
                 
