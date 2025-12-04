@@ -1003,6 +1003,8 @@ async function init() {
     createRdlObject(rdl2Objects.scene_classes["BoxGeometry"], "Box");
     createRdlObject(rdl2Objects.scene_classes["SphereGeometry"], "Sphere");
     createRdlObject(rdl2Objects.scene_classes["UsdGeometry"], "usdGeometry");
+    createRdlObject(rdl2Objects.scene_classes["SphereLight"], "SphereLight");
+    createRdlObject(rdl2Objects.scene_classes["SphereLight"], "SphereLight_2");
 
     refreshTheCanvas();
 

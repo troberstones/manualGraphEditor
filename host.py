@@ -64,10 +64,24 @@ def writeRdla2File(listOfObjects):
     scene_classes = rdl2_schema.get('scene_classes', {})
     
     # Build name to type map
-    name_to_type = {obj['name']: obj['className'] for obj in listOfObjects}
+    name_to_className = {obj['name']: obj['className'] for obj in listOfObjects}
+    name_to_type = {obj['name']: obj['type'] for obj in listOfObjects}
     
     output_lines = []
-    
+
+    geometryNodeList = [obj for obj in listOfObjects if obj['type'] == 'Geometry']
+    lightNodeList = [obj for obj in listOfObjects if obj['type'] == 'Light']
+
+    output_lines.append('GeometrySet("GeometrySet") {')
+    for obj in geometryNodeList:
+        output_lines.append(f'    {obj["className"]}("{obj["name"]}"),')
+    output_lines.append('}')
+
+    output_lines.append('LightSet("LightSet") {')
+    for obj in lightNodeList:
+        output_lines.append(f'    {obj["className"]}("{obj["name"]}"),')
+    output_lines.append('}')
+
     for obj in listOfObjects:
         objType = obj['className']
         objName = obj['name']
@@ -86,6 +100,7 @@ def writeRdla2File(listOfObjects):
         
         # Collect all attributes to write
         all_keys = set(editedProperties.keys()) | set(connections.keys())
+        
         
         if objType == 'Layer':
             geometries = editedProperties.get('geometries', [])
@@ -121,7 +136,7 @@ def writeRdla2File(listOfObjects):
             
             if attrName in connections:
                 sourceNodeName = connections[attrName]['sourceNodeName']
-                className = name_to_type.get(sourceNodeName)
+                className = name_to_className.get(sourceNodeName)
                 
                 if className:
                     sourceRef = f'{className}("{sourceNodeName}")'
