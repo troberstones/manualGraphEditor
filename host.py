@@ -69,7 +69,7 @@ def writeRdla2File(listOfObjects):
     output_lines = []
     
     for obj in listOfObjects:
-        objType = obj['type']
+        objType = obj['className']
         objName = obj['name']
         connections = obj.get('connections', {})
         editedProperties = obj.get('editedProperties', {})

@@ -947,6 +947,7 @@ function setupRenderMenu() {
                     }
                     return {
                         id: obj.id,
+                        className: obj.className,
                         name: obj.name,
                         type: obj.type,
                         x: obj.x,
@@ -957,6 +958,7 @@ function setupRenderMenu() {
                 }
                 return {
                     id: obj.id,
+                    className: obj.className,
                     name: obj.name,
                     type: obj.type,
                     x: obj.x,
