@@ -92,14 +92,21 @@ function createLayerEditor(container, layerObject) {
         const tdMat = document.createElement('td');
         const inputMat = document.createElement('input');
         inputMat.type = 'text';
-        inputMat.value = getValue('surface_shaders', index);
+        const currentMat = getValue('surface_shaders', index);
+        inputMat.value = (currentMat && currentMat.className && currentMat.name)
+            ? `${currentMat.className}("${currentMat.name}")`
+            : currentMat;
+
         inputMat.readOnly = true; // Make it read-only, set via menu
         inputMat.placeholder = "Right-click to set";
 
         inputMat.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             showMaterialContextMenu(e.clientX, e.clientY, (selectedMaterial) => {
-                inputMat.value = selectedMaterial;
+                const displayVal = (selectedMaterial && selectedMaterial.className && selectedMaterial.name)
+                    ? `${selectedMaterial.className}("${selectedMaterial.name}")`
+                    : selectedMaterial;
+                inputMat.value = displayVal;
                 setValue('surface_shaders', index, selectedMaterial);
             });
         });
@@ -153,8 +160,9 @@ function showMaterialContextMenu(x, y, callback) {
             const item = document.createElement('div');
             item.className = 'context-menu-item';
             item.textContent = mat.name;
+            item.rdlobject = mat;
             item.addEventListener('click', () => {
-                callback(mat.name);
+                callback(mat);
                 document.body.removeChild(menu);
             });
             menu.appendChild(item);
