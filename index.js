@@ -927,7 +927,34 @@ function setupRenderMenu() {
                         sourceNodeName: obj.connections[key].sourceNode.name
                     };
                 }
-
+                if (obj.className === "Layer") {
+                    //shorten the geometry paramter to a list of strings of className("name")
+                    const flattenedEditedProperties = {};
+                    if (obj.editedProperties) {
+                        Object.keys(obj.editedProperties).forEach(key => {
+                            const value = obj.editedProperties[key];
+                            if (Array.isArray(value)) {
+                                flattenedEditedProperties[key] = value.map(item => {
+                                    if (item && item.className && item.name) {
+                                        return `${item.className}("${item.name}")`;
+                                    }
+                                    return item;
+                                });
+                            } else {
+                                flattenedEditedProperties[key] = value;
+                            }
+                        });
+                    }
+                    return {
+                        id: obj.id,
+                        name: obj.name,
+                        type: obj.type,
+                        x: obj.x,
+                        y: obj.y,
+                        connections: connections,
+                        editedProperties: flattenedEditedProperties,
+                    };
+                }
                 return {
                     id: obj.id,
                     name: obj.name,
