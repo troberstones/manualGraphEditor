@@ -72,15 +72,19 @@ def writeRdla2File(listOfObjects):
     geometryNodeList = [obj for obj in listOfObjects if obj['type'] == 'Geometry']
     lightNodeList = [obj for obj in listOfObjects if obj['type'] == 'Light']
 
-    output_lines.append('GeometrySet("GeometrySet") {')
-    for obj in geometryNodeList:
-        output_lines.append(f'    {obj["className"]}("{obj["name"]}"),')
-    output_lines.append('}')
+    output_lines_geometrySet = []
+    output_lines_lightSet = []
+    output_lines_layers = []
 
-    output_lines.append('LightSet("LightSet") {')
+    output_lines_geometrySet.append('GeometrySet("GeometrySet") {')
+    for obj in geometryNodeList:
+        output_lines_geometrySet.append(f'    {obj["className"]}("{obj["name"]}"),')
+    output_lines_geometrySet.append('}\n')
+
+    output_lines_lightSet.append('LightSet("LightSet") {')
     for obj in lightNodeList:
-        output_lines.append(f'    {obj["className"]}("{obj["name"]}"),')
-    output_lines.append('}')
+        output_lines_lightSet.append(f'    {obj["className"]}("{obj["name"]}"),')
+    output_lines_lightSet.append('}\n')
 
     for obj in listOfObjects:
         objType = obj['className']
@@ -96,13 +100,18 @@ def writeRdla2File(listOfObjects):
         else:
             line = f'{objType}("{objName}") {{'
         
-        output_lines.append(line)
+        # this is not great, I need to find a better way to handle this, 
+        # maybe a function that takes an object and outputLines object to write to, 
+        # then i can be specific about the order of the generation
+        if objType != 'Layer':
+            output_lines.append(line)
         
         # Collect all attributes to write
         all_keys = set(editedProperties.keys()) | set(connections.keys())
         
         
         if objType == 'Layer':
+            output_lines_layers.append(line)
             geometries = editedProperties.get('geometries', [])
             surface_shaders = editedProperties.get('surface_shaders', [])
             parts = editedProperties.get('parts', [])
@@ -120,7 +129,8 @@ def writeRdla2File(listOfObjects):
                 part = parts[i] if i < len(parts) else '""'
                 light_set = light_sets[i] if i < len(light_sets) else '""'
                 
-                output_lines.append(f'    {{{geo}, {part}, {mat}, {light_set}}},')
+                output_lines_layers.append(f'    {{{geo}, {part}, {mat}, {light_set}}},')
+            output_lines_layers.append('}\n')
             
             all_keys.discard('geometries')
             all_keys.discard('surface_shaders')
@@ -163,11 +173,16 @@ def writeRdla2File(listOfObjects):
             
             output_lines.append(f'    ["{attrName}"] = {valString},')
             
-        output_lines.append('}')
+        # this is a stupid wat to do it. 
+        if objType != 'Layer':
+            output_lines.append('}')
         output_lines.append('')
         
     with open('liverdlafile.rdla', 'w') as f:
         f.write('\n'.join(output_lines))
+        f.write('\n'.join(output_lines_geometrySet))
+        f.write('\n'.join(output_lines_lightSet))
+        f.write('\n'.join(output_lines_layers))
 
 # starting with a specified directory, return a list of the files in JSON format  and send it to the webpage so that it can provide a file fileBrowser
 def fileBrowser(startDirectory, filetype):
