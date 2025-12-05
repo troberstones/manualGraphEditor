@@ -58,6 +58,20 @@
           "name": "usdGeometry",
           "className": "UsdGeometry"
         }
+      ],
+      "surface_shaders": [
+        {
+          "name": "Foo Test Base Material",
+          "className": "BaseMaterial"
+        },
+        {
+          "name": "Foo Test Base Material",
+          "className": "BaseMaterial"
+        },
+        {
+          "name": "Foo Test Base Material",
+          "className": "BaseMaterial"
+        }
       ]
     }
   },
