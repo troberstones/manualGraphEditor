@@ -894,7 +894,51 @@ function createNodeConnection(node, attributeName, sourceNode) {
 function removeBinding(node, attributeName) {
     delete node.connections[attributeName];
 }
+function saveSceneAsJson(filePath) {
+    // convert the listOfObjects to a string
+    // strinify the json, but if the type is and RdlObject, just return the name and className
+    const sceneJson = JSON.stringify(listOfObjects, (key, value) => {
+        if (value instanceof NodeConnection) {
+            return {
+                name: value.name,
+                className: value.className
+            };
+        }
+        return value;
+    });
+    // write the string to a file by sending it to the server with the output filepath.
+    fetch('/saveSceneAsJson', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            filePath: filePath,
+            sceneJson: sceneJson
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 
+}
+
+function setupSaveMenu() {
+    const saveMenu = document.getElementById('menu-save');
+    if (saveMenu) {
+        saveMenu.addEventListener('click', () => {
+            //get file output path
+            fileBrowser.open((path) => {
+                console.log("File selected:", path);
+                saveSceneAsJson(path);
+            }, ".", "json", "save");
+        });
+    }
+}
 function setupFileMenu() {
     const fileMenu = document.getElementById('menu-file');
     if (fileMenu) {
@@ -1032,6 +1076,7 @@ async function init() {
 
     setupMouseEvents();
     setupContextMenu();
+    setupSaveMenu();
     setupFileMenu();
     setupRenderMenu();
 }

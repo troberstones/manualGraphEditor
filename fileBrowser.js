@@ -33,16 +33,16 @@ class FileBrowser {
         const header = document.createElement('div');
         header.className = 'file-browser-header';
 
-        const title = document.createElement('div');
-        title.className = 'file-browser-title';
-        title.textContent = 'Open File';
+        this.title = document.createElement('div');
+        this.title.className = 'file-browser-title';
+        this.title.textContent = 'Open File';
 
         const closeBtn = document.createElement('button');
         closeBtn.className = 'file-browser-close';
         closeBtn.innerHTML = '&times;';
         closeBtn.onclick = () => this.close();
 
-        header.appendChild(title);
+        header.appendChild(this.title);
         header.appendChild(closeBtn);
 
         // Path Bar
@@ -62,6 +62,29 @@ class FileBrowser {
         // File List
         this.fileListContainer = document.createElement('div');
         this.fileListContainer.className = 'file-browser-list';
+
+        // Filename Input (for save mode)
+        this.filenameInputContainer = document.createElement('div');
+        this.filenameInputContainer.className = 'file-browser-filename-container';
+        this.filenameInputContainer.style.display = 'none';
+
+        const filenameLabel = document.createElement('span');
+        filenameLabel.textContent = 'Filename:';
+        filenameLabel.style.marginRight = '10px';
+        filenameLabel.style.color = '#ccc';
+
+        this.filenameInput = document.createElement('input');
+        this.filenameInput.type = 'text';
+        this.filenameInput.className = 'file-browser-filename-input';
+
+        this.filenameInput.addEventListener('input', () => {
+            if (this.mode === 'save') {
+                this.selectBtn.disabled = this.filenameInput.value.trim() === '';
+            }
+        });
+
+        this.filenameInputContainer.appendChild(filenameLabel);
+        this.filenameInputContainer.appendChild(this.filenameInput);
 
         // Footer
         const footer = document.createElement('div');
@@ -85,6 +108,7 @@ class FileBrowser {
         windowDiv.appendChild(header);
         windowDiv.appendChild(pathBar);
         windowDiv.appendChild(this.fileListContainer);
+        windowDiv.appendChild(this.filenameInputContainer);
         windowDiv.appendChild(footer);
         this.overlay.appendChild(windowDiv);
 
@@ -97,15 +121,27 @@ class FileBrowser {
      * @param {string} startPath - Optional starting path
      * @param {string} fileType - Optional file extension filter (e.g. ".json") or "all"
      */
-    open(onSelect, startPath = '.', fileType = 'all') {
+    open(onSelect, startPath = '.', fileType = 'all', mode = 'open') {
         this.init();
         this.onSelectCallback = onSelect;
         this.currentPath = startPath;
         this.fileType = fileType;
+        this.mode = mode;
         this.isOpen = true;
         this.overlay.style.display = 'flex';
         this.selectedFile = null;
         this.selectBtn.disabled = true;
+
+        if (this.mode === 'save') {
+            this.title.textContent = 'Save File';
+            this.selectBtn.textContent = 'Save';
+            this.filenameInputContainer.style.display = 'flex';
+            this.filenameInput.value = '';
+        } else {
+            this.title.textContent = 'Open File';
+            this.selectBtn.textContent = 'Select';
+            this.filenameInputContainer.style.display = 'none';
+        }
 
         this.fetchFiles();
     }
@@ -219,12 +255,32 @@ class FileBrowser {
         element.classList.add('selected');
         this.selectedFile = path;
         this.selectBtn.disabled = false;
+
+        if (this.mode === 'save') {
+            const filename = path.split(/[\\/]/).pop();
+            this.filenameInput.value = filename;
+        }
     }
 
     handleSelection() {
-        if (this.selectedFile && this.onSelectCallback) {
-            this.onSelectCallback(this.selectedFile);
-            this.close();
+        if (this.mode === 'save') {
+            const filename = this.filenameInput.value.trim();
+            if (filename) {
+                // Construct full path
+                let separator = '/';
+                if (this.currentPath.includes('\\')) separator = '\\';
+                const fullPath = this.currentPath + (this.currentPath.endsWith(separator) ? '' : separator) + filename;
+
+                if (this.onSelectCallback) {
+                    this.onSelectCallback(fullPath);
+                    this.close();
+                }
+            }
+        } else {
+            if (this.selectedFile && this.onSelectCallback) {
+                this.onSelectCallback(this.selectedFile);
+                this.close();
+            }
         }
     }
 }

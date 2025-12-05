@@ -18,6 +18,16 @@ def getUsdGeometryPrims(usdFilePath):
     geometryPrims = [x.GetPath() for x in stage.Traverse() if x.IsA(UsdGeom.Gprim)]
     return geometryPrims
 
+def saveSceneAsJson(filePath, sceneJson):
+    processedScene = json.loads(sceneJson)
+    with open(filePath, 'w') as f:
+        # pretty print the json
+        json.dump(processedScene, f, indent=2)
+
+def loadSceneAsJson(filePath):
+    with open(filePath, 'r') as f:
+        return json.load(f)
+        
 def loadRdl2Schema():
     global rdl2_schema
     if rdl2_schema is None:
@@ -316,6 +326,19 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 data = json.loads(post_data)
                 saveObjectList(data)
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "success"}).encode('utf-8'))
+            except Exception as e:
+                self.send_error(500, str(e))
+
+        elif self.path == '/saveSceneAsJson':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data)
+                saveSceneAsJson(data['filePath'], data['sceneJson'])
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
