@@ -960,11 +960,101 @@ function setupFileMenu() {
         fileMenu.addEventListener('click', () => {
             fileBrowser.open((path) => {
                 console.log("File selected:", path);
-                // TODO: Handle the selected file (e.g., load it)
-                alert(`Selected file: ${path}`);
-            });
+                loadSceneFromJson(path);
+            }, ".", "json", "open");
         });
     }
+}
+function loadSceneFromJson(filePath) {
+    fetch('/loadSceneFromJson', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            filePath: filePath
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+
+            if (!Array.isArray(data)) {
+                console.error("Loaded data is not an array");
+                return;
+            }
+
+            // Clear existing objects
+            listOfObjects = [];
+            setOfNames = [];
+            selectedObject = null;
+
+            // Pass 1: Create all objects
+            data.forEach(objData => {
+                const classDef = rdl2Objects.scene_classes[objData.className];
+                if (classDef) {
+                    // createRdlObject adds to listOfObjects and setOfNames
+                    const newObj = createRdlObject(classDef, objData.name);
+
+                    // Restore properties
+                    newObj.x = objData.x;
+                    newObj.y = objData.y;
+                    if (objData.id) newObj.id = objData.id;
+
+                    // Temporarily store editedProperties (will resolve references later)
+                    newObj.editedProperties = objData.editedProperties || {};
+                } else {
+                    console.warn(`Unknown class: ${objData.className}`);
+                }
+            });
+
+            // Helper to resolve object references in editedProperties
+            const resolveRefs = (val) => {
+                if (!val) return val;
+                if (Array.isArray(val)) {
+                    return val.map(item => resolveRefs(item));
+                }
+                if (typeof val === 'object') {
+                    if (val.name && val.className && Object.keys(val).length === 2) {
+                        const found = listOfObjects.find(o => o.name === val.name && o.className === val.className);
+                        if (found) return found;
+                    }
+                    const newVal = {};
+                    for (const key in val) {
+                        newVal[key] = resolveRefs(val[key]);
+                    }
+                    return newVal;
+                }
+                return val;
+            };
+
+            // Pass 2: Restore connections and resolve references
+            data.forEach(objData => {
+                const targetObj = listOfObjects.find(o => o.name === objData.name);
+                if (targetObj) {
+                    // Restore connections
+                    if (objData.connections) {
+                        Object.keys(objData.connections).forEach(attrName => {
+                            const connData = objData.connections[attrName];
+                            const sourceObj = listOfObjects.find(o => o.name === connData.name);
+                            if (sourceObj) {
+                                createNodeConnection(targetObj, attrName, sourceObj);
+                            }
+                        });
+                    }
+
+                    // Resolve references in editedProperties
+                    if (targetObj.editedProperties) {
+                        targetObj.editedProperties = resolveRefs(targetObj.editedProperties);
+                    }
+                }
+            });
+
+            refreshTheCanvas();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 // function to initialize the application

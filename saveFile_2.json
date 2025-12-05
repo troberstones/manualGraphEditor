@@ -3,8 +3,8 @@
     "name": "Foo Test Base Material",
     "className": "BaseMaterial",
     "type": "Material",
-    "x": 174,
-    "y": 411,
+    "x": 252,
+    "y": 741,
     "height": 50,
     "connections": {
       "diffuse_color": {
@@ -22,8 +22,8 @@
     "name": "Foo Test BlendMap",
     "className": "BlendMap",
     "type": "Map",
-    "x": 174,
-    "y": 411,
+    "x": 79,
+    "y": 744,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -36,22 +36,37 @@
     "name": "Foo Test Layer",
     "className": "Layer",
     "type": "TraceSet",
-    "x": 174,
-    "y": 411,
+    "x": 85,
+    "y": 605,
     "height": 50,
     "connections": {},
     "nodeObject": {
       "name": "Layer",
       "className": "Layer"
     },
-    "editedProperties": {}
+    "editedProperties": {
+      "geometries": [
+        {
+          "name": "Box",
+          "className": "BoxGeometry"
+        },
+        {
+          "name": "Sphere",
+          "className": "SphereGeometry"
+        },
+        {
+          "name": "usdGeometry",
+          "className": "UsdGeometry"
+        }
+      ]
+    }
   },
   {
     "name": "Box",
     "className": "BoxGeometry",
     "type": "Geometry",
-    "x": 174,
-    "y": 411,
+    "x": 311,
+    "y": 344,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -91,8 +106,8 @@
     "name": "Sphere",
     "className": "SphereGeometry",
     "type": "Geometry",
-    "x": 174,
-    "y": 411,
+    "x": 308,
+    "y": 452,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -132,8 +147,8 @@
     "name": "usdGeometry",
     "className": "UsdGeometry",
     "type": "Geometry",
-    "x": 174,
-    "y": 411,
+    "x": 49,
+    "y": 437,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -149,8 +164,8 @@
     "name": "SphereLight",
     "className": "SphereLight",
     "type": "Light",
-    "x": 174,
-    "y": 411,
+    "x": 284,
+    "y": 239,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -190,8 +205,8 @@
     "name": "SphereLight_2",
     "className": "SphereLight",
     "type": "Light",
-    "x": 174,
-    "y": 411,
+    "x": 290,
+    "y": 568,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -231,8 +246,8 @@
     "name": "DistantLight",
     "className": "DistantLight",
     "type": "Light",
-    "x": 174,
-    "y": 411,
+    "x": 44,
+    "y": 332,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -245,8 +260,8 @@
     "name": "Camera",
     "className": "PerspectiveCamera",
     "type": "Camera",
-    "x": 174,
-    "y": 411,
+    "x": 80,
+    "y": 533,
     "height": 50,
     "connections": {},
     "nodeObject": {
@@ -286,8 +301,8 @@
     "name": "Foo SceneVariables",
     "className": "SceneVariables",
     "type": "SceneObject",
-    "x": 174,
-    "y": 411,
+    "x": 120,
+    "y": 233,
     "height": 50,
     "connections": {},
     "nodeObject": {
