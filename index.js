@@ -897,8 +897,23 @@ function removeBinding(node, attributeName) {
 function saveSceneAsJson(filePath) {
     // convert the listOfObjects to a string
     // strinify the json, but if the type is and RdlObject, just return the name and className
-    const sceneJson = JSON.stringify(listOfObjects, (key, value) => {
+    const sceneJson = JSON.stringify(listOfObjects, function (key, value) {
+        if (key === 'nodeObject' && value) {
+            return {
+                name: value.class_name,
+                className: value.class_name
+            };
+        }
         if (value instanceof NodeConnection) {
+            return {
+                name: value.sourceNode.name,
+                className: value.sourceNode.className
+            };
+        }
+        if (value instanceof RdlObject) {
+            if (this === listOfObjects) {
+                return value;
+            }
             return {
                 name: value.name,
                 className: value.className
