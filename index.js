@@ -978,7 +978,7 @@ function setupRenderMenu() {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Success:', data);
-                    alert('Render command sent successfully!');
+                    //alert('Render command sent successfully!');
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -987,7 +987,12 @@ function setupRenderMenu() {
         });
     }
 }
-
+function makeMat4(arr) {
+    return [[arr[0], arr[1], arr[2], arr[3]], [arr[4], arr[5], arr[6], arr[7]], [arr[8], arr[9], arr[10], arr[11]], [arr[12], arr[13], arr[14], arr[15],]];
+}
+function xform(tx, ty, tz) {
+    return makeMat4([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, tx, ty, tz, 1]);
+}
 // function to initialize the application
 async function init() {
     listOfObjects = [];
@@ -1000,11 +1005,23 @@ async function init() {
     var blendMap = createRdlObject(rdl2Objects.scene_classes["BlendMap"], "Test BlendMap");
     createNodeConnection(baseMaterial, "diffuse_color", blendMap);
     createRdlObject(rdl2Objects.scene_classes["Layer"], "Test Layer");
-    createRdlObject(rdl2Objects.scene_classes["BoxGeometry"], "Box");
-    createRdlObject(rdl2Objects.scene_classes["SphereGeometry"], "Sphere");
-    createRdlObject(rdl2Objects.scene_classes["UsdGeometry"], "usdGeometry");
-    createRdlObject(rdl2Objects.scene_classes["SphereLight"], "SphereLight");
-    createRdlObject(rdl2Objects.scene_classes["SphereLight"], "SphereLight_2");
+    box = createRdlObject(rdl2Objects.scene_classes["BoxGeometry"], "Box");
+    box.editedProperties["node_xform"] = xform(3, 0, 0);
+    sphere = createRdlObject(rdl2Objects.scene_classes["SphereGeometry"], "Sphere");
+    sphere.editedProperties["node_xform"] = xform(0, 2, 0)
+    usdGeo = createRdlObject(rdl2Objects.scene_classes["UsdGeometry"], "usdGeometry");
+    usdGeo.editedProperties["stage"] = "/Users/chrisharvey/Documents/manualGraphEditor/threeMonkeys.usdc";
+    usdGeo.editedProperties["prim_path"] = "/root/Suzanne";
+    sl = createRdlObject(rdl2Objects.scene_classes["SphereLight"], "SphereLight");
+    sl.editedProperties["node_xform"] = xform(-3, 2, 0);
+    sl = createRdlObject(rdl2Objects.scene_classes["SphereLight"], "SphereLight_2");
+    sl.editedProperties["node_xform"] = xform(10, 10, 0);
+    createRdlObject(rdl2Objects.scene_classes["DistantLight"], "DistantLight");
+    camera = createRdlObject(rdl2Objects.scene_classes["PerspectiveCamera"], "Camera");
+    camera.editedProperties["node_xform"] = makeMat4([0.555086, 0, -0.831793, 0, 0.0477246, 0.998353, 0.0318484, 0, 0.830356, -0.057371, 0.554126, 0, 10.7715, -1.49194, 7.58975, 1]);
+    scenevars = createRdlObject(rdl2Objects.scene_classes["SceneVariables"], "SceneVariables");
+    scenevars.editedProperties["image_width"] = 512;
+    scenevars.editedProperties["image_height"] = 512;
 
     refreshTheCanvas();
 

@@ -119,7 +119,7 @@ def writeRdla2File(listOfObjects):
         output_lines_geometrySet.append(f'    {obj["className"]}("{obj["name"]}"),')
     output_lines_geometrySet.append('}\n')
 
-    output_lines_lightSet.append('LightSet("LightSet") {')
+    output_lines_lightSet.append('local lightsetvar = LightSet("LightSet") {')
     for obj in lightNodeList:
         output_lines_lightSet.append(f'    {obj["className"]}("{obj["name"]}"),')
     output_lines_lightSet.append('}\n')
@@ -165,7 +165,7 @@ def writeRdla2File(listOfObjects):
                 geo = geometries[i]
                 mat = surface_shaders[i] if i < len(surface_shaders) else '""'
                 part = parts[i] if i < len(parts) else '""'
-                light_set = light_sets[i] if i < len(light_sets) else '""'
+                light_set = light_sets[i] if i < len(light_sets) else 'lightsetvar'
                 
                 output_lines_layers.append(f'    {{{geo}, {part}, {mat}, {light_set}}},')
             output_lines_layers.append('}\n')
