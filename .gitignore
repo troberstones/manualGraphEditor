@@ -8,3 +8,8 @@
 *.exr
 *.rdla
 *.rdl2
+*.json
+*.*.swp
+*.swp
+.*.swp
+.*.*.swp
