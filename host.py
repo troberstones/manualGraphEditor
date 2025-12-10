@@ -8,6 +8,10 @@ import json
 import http.server
 import socketserver
 from pxr import Usd, UsdGeom
+import fnmatch
+import sys
+from zlib import adler32
+import copy
 
 PORT = 8011
 rld2ObjectStorage = None
@@ -17,6 +21,14 @@ def getUsdGeometryPrims(usdFilePath):
     stage = Usd.Stage.Open(usdFilePath)
     geometryPrims = [x.GetPath() for x in stage.Traverse() if x.IsA(UsdGeom.Gprim)]
     return geometryPrims
+
+def getPrimsFromUSD(usdStage, primPath):
+    prims = getUsdGeometryPrims(usdStage)
+    prims = [prim.pathString for prim in prims]
+    print(prims)
+    #use the wildcard expression in the primPath to match primt is the prims list, 
+    #return the matching primsj
+    return [prim for prim in prims if fnmatch.fnmatch(prim, primPath)]
 
 def saveSceneAsJson(filePath, sceneJson):
     processedScene = json.loads(sceneJson)
@@ -121,13 +133,44 @@ def writeRdla2File(listOfObjects):
     
     output_lines = []
 
-    geometryNodeList = [obj for obj in listOfObjects if obj['type'] == 'Geometry']
     lightNodeList = [obj for obj in listOfObjects if obj['type'] == 'Light']
 
     output_lines_geometrySet = []
     output_lines_lightSet = []
     output_lines_layers = []
 
+    # look for className UsdGeometry
+    usdGeometryNodeList = [obj for obj in listOfObjects if obj['className'] == 'UsdGeometry']
+    expandedGeometryNodeDict = {}
+    for obj in usdGeometryNodeList:
+        primPath = obj['editedProperties']['prim_path']
+        usdStage = obj['editedProperties']['stage']
+        if primPath and usdStage:
+            if '*' in primPath:
+                # use the usd module to get the tree of prims in the USD file
+                # then remove this obj from the from the listOfObjects
+                listOfObjects.remove(obj)
+                #and duplicate it for each selected prim in based on the primPath expression
+                #i.e. if the prim path says /root/suz* then fine all of the prims in the usd that math
+                #that expression and duplicate the object for each one
+                #the layer node needs to be updated so that the original instance for the the UsdGeometry("name") is replaced with 
+                # thew new instances, wich each instance getting an deduplicaed name
+                #
+                # get the list of prims from the USD file
+                prims = getPrimsFromUSD(usdStage, primPath)
+                for prim in prims:
+                    newObj = copy.deepcopy(obj)
+                    hashIndex = adler32(prim.encode('utf-8'))
+                    newObj['name'] = newObj['name'] + '_' + str(hashIndex)
+                    newObj['editedProperties']['prim_path'] = prim
+                    objFullName = f'{obj["className"]}("{obj["name"]}")'
+                    if(expandedGeometryNodeDict.get(objFullName)):
+                        expandedGeometryNodeDict[objFullName].append(newObj)
+                    else:
+                        expandedGeometryNodeDict[objFullName] = [newObj]
+                    listOfObjects.append(newObj)
+
+    geometryNodeList = [obj for obj in listOfObjects if obj['type'] == 'Geometry']
     output_lines_geometrySet.append('GeometrySet("GeometrySet") {')
     for obj in geometryNodeList:
         output_lines_geometrySet.append(f'    {obj["className"]}("{obj["name"]}"),')
@@ -137,7 +180,6 @@ def writeRdla2File(listOfObjects):
     for obj in lightNodeList:
         output_lines_lightSet.append(f'    {obj["className"]}("{obj["name"]}"),')
     output_lines_lightSet.append('}\n')
-
     for obj in listOfObjects:
         objType = obj['className']
         objName = obj['name']
@@ -180,8 +222,14 @@ def writeRdla2File(listOfObjects):
                 mat = surface_shaders[i] if i < len(surface_shaders) else '""'
                 part = parts[i] if i < len(parts) else '""'
                 light_set = light_sets[i] if i < len(light_sets) else 'lightsetvar'
-                
-                output_lines_layers.append(f'    {{{geo}, {part}, {mat}, {light_set}}},')
+                # if the geo was expaded based on the primPath expression
+                # then we need to duplicate the layer entry for each expanded geometry
+                if(geo in expandedGeometryNodeDict):
+                    for expandedGeo in expandedGeometryNodeDict[geo]:
+                        geo = f'{expandedGeo["className"]}("{expandedGeo["name"]}")'
+                        output_lines_layers.append(f'    {{{geo}, {part}, {mat}, {light_set}}},')
+                else:
+                    output_lines_layers.append(f'    {{{geo}, {part}, {mat}, {light_set}}},')
             output_lines_layers.append('}\n')
             
             all_keys.discard('geometries')
@@ -365,14 +413,21 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_error(404)
 
 if __name__ == "__main__":
-    print(f"Starting server on port {PORT}...")
-    with socketserver.TCPServer(("", PORT), MyRequestHandler) as httpd:
-        print("Serving at port", PORT)
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            pass
-        httpd.server_close()
-        print("Server stopped.")
+    if(len(sys.argv) > 1):
+        usdStage = sys.argv[1]
+        primPath = sys.argv[2]
+        foo = getPrimsFromUSD(usdStage, primPath)
+        print("matches!")
+        print(foo)
+    else:
+        print(f"Starting server on port {PORT}...")
+        with socketserver.TCPServer(("", PORT), MyRequestHandler) as httpd:
+            print("Serving at port", PORT)
+            try:
+                httpd.serve_forever()
+            except KeyboardInterrupt:
+                pass
+            httpd.server_close()
+            print("Server stopped.")
 
  
