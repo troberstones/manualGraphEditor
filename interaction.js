@@ -40,6 +40,8 @@ function setupMouseEvents() {
         } else {
             if (!bindingSelectionMode) {
                 selectedObject = null;
+                // clear the property editor if we deselect
+                populateRightPropertyEditor();
             }
             isDraggingCanvas = true;
             lastMouseX = mouseX;
@@ -77,6 +79,58 @@ function setupMouseEvents() {
         isDragging = false;
         isDraggingCanvas = false;
     });
+}
+
+function setupKeyboardEvents() {
+    document.addEventListener('keyup', function (e) {
+        // checks if the user is typing in an input field
+        const activeTag = document.activeElement.tagName.toLowerCase();
+        if (activeTag === 'input' || activeTag === 'textarea') {
+            return;
+        }
+
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            if (selectedObject) {
+                deleteSelectedObject();
+            }
+        }
+    });
+}
+
+function deleteSelectedObject() {
+    if (!selectedObject) return;
+
+    // 1. Remove from listOfObjects
+    const index = listOfObjects.indexOf(selectedObject);
+    if (index > -1) {
+        listOfObjects.splice(index, 1);
+    }
+
+    // Remove from setOfNames
+    const nameIndex = setOfNames.indexOf(selectedObject.name);
+    if (nameIndex > -1) {
+        setOfNames.splice(nameIndex, 1);
+    }
+
+    // Remove from deltaAccumulator if present
+    if (deltaAccumulator && deltaAccumulator[selectedObject.name]) {
+        delete deltaAccumulator[selectedObject.name];
+    }
+
+    // 2. Remove references to this object in other objects' connections
+    listOfObjects.forEach(obj => {
+        Object.keys(obj.connections).forEach(attrName => {
+            const connection = obj.connections[attrName];
+            if (connection.sourceNode === selectedObject) {
+                removeBinding(obj, attrName);
+            }
+        });
+    });
+
+    // 3. Clear selection and update UI
+    selectedObject = null;
+    refreshTheCanvas();
+    updatePropertyEditor();
 }
 
 function setMousePointerMode(mode) {

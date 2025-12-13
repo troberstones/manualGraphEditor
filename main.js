@@ -109,6 +109,7 @@ async function init() {
     }
 
     setupMouseEvents();
+    setupKeyboardEvents();
     setupContextMenu();
     setupSaveMenu();
     setupFileMenu();
