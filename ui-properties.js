@@ -204,6 +204,30 @@ function populateRightPropertyEditor() {
         const type = attr.attrType;
 
         const updateProperty = (val) => {
+            let isInvalid = false;
+            if (attr.attrType !== 'String') {
+                if (typeof val === 'number' && isNaN(val)) {
+                    isInvalid = true;
+                } else if (Array.isArray(val)) {
+                    const deepCheck = (v) => {
+                        if (Array.isArray(v)) return v.some(deepCheck);
+                        return typeof v === 'number' && isNaN(v);
+                    };
+                    if (deepCheck(val)) isInvalid = true;
+                }
+            }
+
+            if (isInvalid) {
+                if (selectedObject.editedProperties && selectedObject.editedProperties.hasOwnProperty(key)) {
+                    delete selectedObject.editedProperties[key];
+                    if (deltaAccumulator[selectedObject.name] && deltaAccumulator[selectedObject.name].changes) {
+                        delete deltaAccumulator[selectedObject.name].changes[key];
+                    }
+                }
+                label.style.color = '';
+                return;
+            }
+
             if (!selectedObject.editedProperties) selectedObject.editedProperties = {};
             selectedObject.editedProperties[key] = val;
             label.style.color = 'orange';
@@ -299,7 +323,7 @@ function populateRightPropertyEditor() {
 
                 numInput.addEventListener('input', () => {
                     const arr = getArray();
-                    arr[idx] = parseFloat(numInput.value) || 0;
+                    arr[idx] = parseFloat(numInput.value);
                     updateProperty(arr);
                     colorInput.value = rgbToHex(arr[0], arr[1], arr[2]);
                 });
@@ -353,7 +377,7 @@ function populateRightPropertyEditor() {
                     matInput.addEventListener('input', (e) => {
                         const mat = getMatrix();
                         if (!mat[i]) mat[i] = [];
-                        mat[i][j] = parseFloat(e.target.value) || 0;
+                        mat[i][j] = parseFloat(e.target.value);
                         updateProperty(mat);
                     });
                     inputContainer.appendChild(matInput);
@@ -385,7 +409,7 @@ function populateRightPropertyEditor() {
 
                 numInput.addEventListener('input', (e) => {
                     const vec = getVec();
-                    vec[idx] = parseFloat(e.target.value) || 0;
+                    vec[idx] = parseFloat(e.target.value);
                     updateProperty(vec);
                 });
 
