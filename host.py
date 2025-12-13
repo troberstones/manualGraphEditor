@@ -167,6 +167,37 @@ def constructXformString(nodeName, name_to_obj, visited=None):
             
     return current_str
 
+def writeDeltaToRdlaFile(deltaData):
+    loadRdl2Schema()
+    lines = []
+    
+    # Sort keys for deterministic output
+    for objName in sorted(deltaData.keys()):
+        data = deltaData[objName]
+        className = data.get('className')
+        changes = data.get('changes', {})
+        
+        lines.append(f'{className}("{objName}") {{')
+        
+        # Get schema attributes for this class
+        classSchema = rdl2_schema.get('scene_classes', {}).get(className, {})
+        attributesSchema = classSchema.get('attributes', {})
+        
+        for attr in sorted(changes.keys()):
+            val = changes[attr]
+            # Lookup type
+            attrInfo = attributesSchema.get(attr, {})
+            attrType = attrInfo.get('attrType', 'String') # Default to String if unknown
+            
+            # Format value
+            valStr = formatValue(val, attrType)
+            lines.append(f'    ["{attr}"] = {valStr},')
+            
+        lines.append('}\n')
+        
+    with open('delta.rdla', 'w') as f:
+        f.write('\n'.join(lines))
+
 def writeRdla2File(listOfObjects):
     global rld2ObjectStorage
     rld2ObjectStorage = listOfObjects
@@ -432,6 +463,19 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 data = json.loads(post_data)
                 writeRdla2File(data)
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "success"}).encode('utf-8'))
+            except Exception as e:
+                self.send_error(500, str(e))
+
+        elif self.path == '/writeDeltaRdla':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data)
+                writeDeltaToRdlaFile(data)
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()

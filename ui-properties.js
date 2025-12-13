@@ -207,6 +207,9 @@ function populateRightPropertyEditor() {
             if (!selectedObject.editedProperties) selectedObject.editedProperties = {};
             selectedObject.editedProperties[key] = val;
             label.style.color = 'orange';
+            if (typeof addToDelta === 'function') {
+                addToDelta(selectedObject, key, val);
+            }
         };
 
         if (attr.enum) {

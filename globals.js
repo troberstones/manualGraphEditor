@@ -20,3 +20,4 @@ var lastMouseX = 0;
 var lastMouseY = 0;
 var bindingSelectionMode = false;
 var currentBindingProperty = null;
+var deltaAccumulator = {}; // Stores accumulated deltas: { objectName: { className: "Type", changes: { attr: val } } }

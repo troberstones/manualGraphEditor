@@ -161,10 +161,44 @@ function loadSceneFromJson(filePath) {
         });
 }
 
+
+function addToDelta(object, property, value) {
+    if (!deltaAccumulator[object.name]) {
+        deltaAccumulator[object.name] = {
+            className: object.className,
+            changes: {}
+        };
+    }
+    deltaAccumulator[object.name].changes[property] = value;
+    sendDelta();
+}
+
+function sendDelta() {
+    fetch('/writeDeltaRdla', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(deltaAccumulator)
+    })
+        .catch((error) => {
+            console.error('Error sending delta:', error);
+        });
+}
+
 function setupRenderMenu() {
     const renderMenu = document.getElementById('menu-render');
     if (renderMenu) {
         renderMenu.addEventListener('click', () => {
+            // Reset delta accumulator
+            deltaAccumulator = {};
+            // We also want to clear delta.rdla on server, sending empty object
+            fetch('/writeDeltaRdla', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            }).catch(e => console.error("Error clearing delta:", e));
+
             if (!listOfObjects || listOfObjects.length === 0) {
                 console.warn("No objects to render");
                 alert("No objects to render");
