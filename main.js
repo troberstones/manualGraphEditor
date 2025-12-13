@@ -15,7 +15,49 @@ async function init() {
     rdl2Objects = await readJsonFile("rdl2Objects.json");
     Object.keys(rdl2Objects.scene_classes).forEach(key => {
         rdl2Objects.scene_classes[key].class_name = key;
+        if (rdl2Objects.scene_classes[key].attributes && rdl2Objects.scene_classes[key].attributes["node_xform"]) {
+            rdl2Objects.scene_classes[key].attributes["node_xform"].bindable = true;
+        }
     });
+
+    rdl2Objects.scene_classes["TranslateNode"] = {
+        class_name: "TranslateNode",
+        type: "internalXform",
+        attributes: {
+            translate: {
+                attrType: "Vec3f",
+                bindable: true,
+                default: [0, 0, 0],
+                metadata: { label: "Translate" }
+            }
+        }
+    };
+
+    rdl2Objects.scene_classes["RotateNode"] = {
+        class_name: "RotateNode",
+        type: "internalXform",
+        attributes: {
+            rotate: {
+                attrType: "Vec3f",
+                bindable: true,
+                default: [0, 0, 0],
+                metadata: { label: "Rotate (XYZ)" }
+            }
+        }
+    };
+
+    rdl2Objects.scene_classes["ScaleNode"] = {
+        class_name: "ScaleNode",
+        type: "internalXform",
+        attributes: {
+            scale: {
+                attrType: "Vec3f",
+                bindable: true,
+                default: [1, 1, 1],
+                metadata: { label: "Scale" }
+            }
+        }
+    };
     // create a rdl2 BaseMaterial object
     var baseMaterial = createRdlObject(rdl2Objects.scene_classes["BaseMaterial"], "Test Base Material");
     var blendMap = createRdlObject(rdl2Objects.scene_classes["BlendMap"], "Test BlendMap");

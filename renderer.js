@@ -45,7 +45,7 @@ function drawRdlObject(object) {
     ctx.font = "12px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#a3a275ff";
+    ctx.fillStyle = "#ff8c00ff";
     ctx.fillText(object.name, drawX + nodeWidth / 2, drawY + nodeHeight / 2);
 }
 
