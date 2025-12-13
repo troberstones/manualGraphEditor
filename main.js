@@ -37,11 +37,17 @@ async function init() {
         class_name: "RotateNode",
         type: "internalXform",
         attributes: {
-            rotate: {
+            axis: {
                 attrType: "Vec3f",
+                bindable: false,
+                default: [0, 1, 0],
+                metadata: { label: "Axis" }
+            },
+            angle: {
+                attrType: "Float",
                 bindable: true,
-                default: [0, 0, 0],
-                metadata: { label: "Rotate (XYZ)" }
+                default: 0,
+                metadata: { label: "Angle" }
             }
         }
     };
@@ -50,6 +56,12 @@ async function init() {
         class_name: "ScaleNode",
         type: "internalXform",
         attributes: {
+            uniformScale: {
+                attrType: "Float",
+                bindable: false,
+                default: 1,
+                metadata: { label: "Uniform Scale" }
+            },
             scale: {
                 attrType: "Vec3f",
                 bindable: true,

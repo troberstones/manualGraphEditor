@@ -118,11 +118,63 @@ def topologicalSort(objects):
         
     return [name_to_obj[name] for name in sorted_names]
 
+def constructXformString(nodeName, name_to_obj, visited=None):
+    if visited is None:
+        visited = set()
+    
+    if nodeName in visited:
+        return ""
+    visited.add(nodeName)
+    
+    node = name_to_obj.get(nodeName)
+    if not node: return ""
+    
+    nodeType = node.get('className')
+    props = node.get('editedProperties', {})
+    
+    parts = []
+    
+    if nodeType == 'TranslateNode':
+        val = props.get('translate', [0,0,0])
+        parts.append(f"translate({val[0]}, {val[1]}, {val[2]})")
+
+    elif nodeType == 'RotateNode':
+        angle = props.get('angle', 0)
+        axis = props.get('axis', [0,1,0])
+        parts.append(f"rotate({angle}, {axis[0]}, {axis[1]}, {axis[2]})")
+
+    elif nodeType == 'ScaleNode':
+        uniformScale = props.get('uniformScale', 1)
+        val = props.get('scale', [1,1,1])
+        if uniformScale != 1:
+            val = [x*uniformScale for x in val]
+        parts.append(f"scale({val[0]}, {val[1]}, {val[2]})")
+        
+    current_str = " * ".join(parts)
+    
+    connections = node.get('connections', {})
+    for attr, conn in connections.items():
+        srcName = conn['sourceNodeName']
+        srcObj = name_to_obj.get(srcName)
+        if srcObj and srcObj.get('type') == 'internalXform':
+            child_str = constructXformString(srcName, name_to_obj, visited)
+            if child_str:
+                if current_str:
+                    current_str = f"{current_str} * {child_str}"
+                else:
+                    current_str = child_str
+            break 
+            
+    return current_str
+
 def writeRdla2File(listOfObjects):
     global rld2ObjectStorage
     rld2ObjectStorage = listOfObjects
     
     listOfObjects = topologicalSort(listOfObjects)
+    
+    # Create a quick lookup for objects
+    name_to_obj = {obj['name']: obj for obj in listOfObjects}
     
     loadRdl2Schema()
     scene_classes = rdl2_schema.get('scene_classes', {})
@@ -169,6 +221,7 @@ def writeRdla2File(listOfObjects):
                     else:
                         expandedGeometryNodeDict[objFullName] = [newObj]
                     listOfObjects.append(newObj)
+                    name_to_obj[newObj['name']] = newObj
 
     geometryNodeList = [obj for obj in listOfObjects if obj['type'] == 'Geometry']
     output_lines_geometrySet.append('GeometrySet("GeometrySet") {')
@@ -185,6 +238,10 @@ def writeRdla2File(listOfObjects):
         objName = obj['name']
         connections = obj.get('connections', {})
         editedProperties = obj.get('editedProperties', {})
+        
+        # Don't emit internalXform nodes as standalone objects
+        if obj.get('type') == 'internalXform':
+            continue
         
         classSchema = scene_classes.get(objType, {})
         attributesSchema = classSchema.get('attributes', {})
@@ -247,26 +304,36 @@ def writeRdla2File(listOfObjects):
             if attrName in connections:
                 sourceNodeName = connections[attrName]['sourceNodeName']
                 className = name_to_className.get(sourceNodeName)
+                sourceType = name_to_type.get(sourceNodeName)
                 
-                if className:
-                    sourceRef = f'{className}("{sourceNodeName}")'
+                if sourceType == 'internalXform':
+                    # Special handling for internalXform chains
+                    valString = ""
+                    if(attrName in editedProperties):
+                        val = editedProperties[attrName]
+                        valString = formatValue(val, attrType)    # We don't bind, we just inline the multiplication chain
+                        valString += " * "
+                    valString += constructXformString(sourceNodeName, name_to_obj)
                 else:
-                    sourceRef = f'"{sourceNodeName}"'
-                
-                if isBindable:
-                    # It's a binding: bind(Map, BaseValue)
-                    if attrName in editedProperties:
-                        baseVal = editedProperties[attrName]
+                    if className:
+                        sourceRef = f'{className}("{sourceNodeName}")'
                     else:
-                        baseVal = attrSchema.get('default')
-                        if baseVal is None:
-                             if attrType == 'Rgb': baseVal = [0,0,0]
-                             elif attrType == 'Float': baseVal = 0.0
+                        sourceRef = f'"{sourceNodeName}"'
                     
-                    baseValStr = formatValue(baseVal, attrType)
-                    valString = f'bind({sourceRef}, {baseValStr})'
-                else:
-                    valString = sourceRef
+                    if isBindable:
+                        # It's a binding: bind(Map, BaseValue)
+                        if attrName in editedProperties:
+                            baseVal = editedProperties[attrName]
+                        else:
+                            baseVal = attrSchema.get('default')
+                            if baseVal is None:
+                                 if attrType == 'Rgb': baseVal = [0,0,0]
+                                 elif attrType == 'Float': baseVal = 0.0
+                        
+                        baseValStr = formatValue(baseVal, attrType)
+                        valString = f'bind({sourceRef}, {baseValStr})'
+                    else:
+                        valString = sourceRef
             else:
                 val = editedProperties[attrName]
                 valString = formatValue(val, attrType)
