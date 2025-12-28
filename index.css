@@ -63,9 +63,32 @@ header {
   overflow-y: auto;
 }
 
-#objectList {
+/* Left Pane Container */
+#LeftPaneTabSelector {
   grid-area: sidebar-left;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-color);
   border-right: 1px solid var(--border-color);
+  overflow: hidden;
+  height: 100%;
+}
+
+#paneScrollContainer {
+  flex: 1;
+  overflow-y: hidden;
+  /* Let children scroll or scroll here? */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+#objectList,
+#layersStack {
+  grid-area: initial;
+  /* Reset grid area */
+  border-right: none;
+  height: 100%;
 }
 
 #properties {
@@ -115,9 +138,15 @@ header {
 }
 
 .tab-item.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
-  background-color: rgba(59, 130, 246, 0.05);
+  color: #f97316;
+  /* Orange */
+  border-bottom-color: #f97316;
+  background-color: rgba(249, 115, 22, 0.05);
+}
+
+/* Utility to hide elements */
+.hidden {
+  display: none !important;
 }
 
 /* Main Canvas Area */

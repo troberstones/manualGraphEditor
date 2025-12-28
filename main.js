@@ -114,6 +114,7 @@ async function init() {
     setupSaveMenu();
     setupFileMenu();
     setupRenderMenu();
+    setupTabs();
 
     // Setup New Project menu
     const newMenu = document.getElementById('menu-new');
@@ -130,6 +131,32 @@ async function init() {
     window.addEventListener('beforeunload', () => {
         saveLocalState();
     });
+}
+function setupTabs() {
+    const objectListTab = document.getElementById('objectListTab');
+    const layersStackTab = document.getElementById('layersStackTab');
+    const objectList = document.getElementById('objectList');
+    const layersStack = document.getElementById('layersStack');
+
+    function selectTab(tabName) {
+        if (tabName === 'objectList') {
+            objectListTab.classList.add('active');
+            layersStackTab.classList.remove('active');
+            objectList.classList.remove('hidden');
+            layersStack.classList.add('hidden');
+        } else {
+            layersStackTab.classList.add('active');
+            objectListTab.classList.remove('active');
+            layersStack.classList.remove('hidden');
+            objectList.classList.add('hidden');
+        }
+    }
+
+    objectListTab.addEventListener('click', () => selectTab('objectList'));
+    layersStackTab.addEventListener('click', () => selectTab('layersStack'));
+
+    // Default to Object List
+    selectTab('objectList');
 }
 
 // Initialize when DOM is ready
