@@ -21,12 +21,27 @@
         <div class="menu-item" id="menu-render">Render</div>
 
     </header>
+    <div id="LeftPaneTabSelector">
+        <div id="tabSelector">
+            <div class="tab-item" id="objectListTab">Object List</div>
+            <div class="tab-item" id="layersStackTab">Layers Stack</div>
+        </div>
+        <div id="paneScrollContainer">
+            <div id="objectList" class="sidebar">
+                <div class="sidebar-header">Object List</div>
+                <div class="sidebar-content">
+                    <!-- Object list items will go here -->
+                    <p style="color: var(--text-secondary); font-style: italic;">No objects</p>
+                </div>
+            </div>
 
-    <div id="objectList" class="sidebar">
-        <div class="sidebar-header">Object List</div>
-        <div class="sidebar-content">
-            <!-- Object list items will go here -->
-            <p style="color: var(--text-secondary); font-style: italic;">No objects</p>
+            <div id="layersStack" class="sidebar">
+                <div class="sidebar-header">Layers Stack</div>
+                <div class="sidebar-content">
+                    <!-- Layers will go here -->
+                    <p style="color: var(--text-secondary); font-style: italic;">No layers</p>
+                </div>
+            </div>
         </div>
     </div>
 
