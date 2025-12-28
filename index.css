@@ -478,3 +478,45 @@ footer {
   background-color: var(--border-color);
   margin: 4px 0;
 }
+
+/* Layer Stack Menu */
+.layerStackMenuButtons {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  gap: 8px;
+}
+
+.layerStackMenuButton {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layerStackMenuButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.layerStackMenuButton.icon-button {
+  padding: 4px;
+  width: 28px;
+  height: 28px;
+}
+
+.layerStackMenuButton.icon-button svg {
+  width: 18px;
+  height: 18px;
+}

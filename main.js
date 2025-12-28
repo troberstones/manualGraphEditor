@@ -114,6 +114,7 @@ async function init() {
     setupSaveMenu();
     setupFileMenu();
     setupRenderMenu();
+    setupLayerStack();
     setupTabs();
 
     // Setup New Project menu
@@ -132,6 +133,83 @@ async function init() {
         saveLocalState();
     });
 }
+
+function setupLayerStack() {
+    const addBaseBtn = document.getElementById('addBaseMaterialBtn');
+    const fillLayerBtn = document.getElementById('fillLayerBtn');
+
+    if (addBaseBtn) {
+        addBaseBtn.addEventListener('click', (e) => {
+            const rect = addBaseBtn.getBoundingClientRect();
+            const x = rect.left;
+            const y = rect.bottom;
+
+            // Filter for DwaBaseLayerable
+            const validTypes = [];
+            if (rdl2Objects && rdl2Objects.scene_classes) {
+                for (const key in rdl2Objects.scene_classes) {
+                    if (rdl2Objects.scene_classes[key].type === "DwaBaseLayerable") {
+                        validTypes.push(key);
+                    }
+                }
+            }
+
+            // Check if we found any, if not, maybe for testing show all Materials? 
+            // User requested strict "DwaBaseLayerable".
+            // If empty, I'll just show "No compatible types" or similar.
+
+            showSimpleContextMenu(x, y, validTypes.length > 0 ? validTypes : ["No DwaBaseLayerable found"], (selected) => {
+                if (selected === "No DwaBaseLayerable found") return;
+
+                // Create the object
+                createRdlObject(rdl2Objects.scene_classes[selected], selected);
+                refreshTheCanvas();
+            });
+        });
+    }
+
+    if (fillLayerBtn) {
+        fillLayerBtn.addEventListener('click', () => {
+            console.log("Fill button clicked");
+            // Future implementation
+        });
+    }
+}
+
+function showSimpleContextMenu(x, y, items, callback) {
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.style.display = 'block';
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+
+    items.forEach(itemText => {
+        const item = document.createElement('div');
+        item.className = 'context-menu-item';
+        item.textContent = itemText;
+        if (itemText === "No DwaBaseLayerable found") {
+            item.className += " disabled";
+        }
+        item.addEventListener('click', () => {
+            callback(itemText);
+            document.body.removeChild(menu);
+        });
+        menu.appendChild(item);
+    });
+
+    document.body.appendChild(menu);
+
+    setTimeout(() => {
+        const closeMenu = (e) => {
+            if (!menu.contains(e.target)) {
+                if (document.body.contains(menu)) document.body.removeChild(menu);
+                window.removeEventListener('click', closeMenu);
+            }
+        };
+        window.addEventListener('click', closeMenu);
+    }, 0);
+}
+
 function setupTabs() {
     const objectListTab = document.getElementById('objectListTab');
     const layersStackTab = document.getElementById('layersStackTab');
