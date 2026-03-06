@@ -147,7 +147,11 @@ function showMaterialContextMenu(x, y, callback) {
     const materials = listOfObjects.filter(obj => {
         // Simple heuristic to find materials. 
         // Adjust based on actual RDL types.
-        return obj.type.includes('Material') || obj.type.includes('Shader');
+        if (!obj.type) return false;
+        return obj.type.includes('Material') ||
+            obj.type.includes('Shader') ||
+            obj.type.includes('DwaBaseHairLayerable') ||
+            obj.type.includes('DwaBaseLayerable');
     });
 
     if (materials.length === 0) {
