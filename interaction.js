@@ -79,6 +79,69 @@ function setupMouseEvents() {
         isDragging = false;
         isDraggingCanvas = false;
     });
+
+    canvas.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const worldX = mouseX - canvasOffsetX;
+        const worldY = mouseY - canvasOffsetY;
+
+        // Check object hit
+        let clickedObject = null;
+        for (let i = listOfObjects.length - 1; i >= 0; i--) {
+            const obj = listOfObjects[i];
+            if (worldX >= obj.x && worldX <= obj.x + nodeWidth &&
+                worldY >= obj.y && worldY <= obj.y + nodeHeight) {
+                clickedObject = obj;
+                break;
+            }
+        }
+
+        if (clickedObject) {
+            const options = [];
+            // Assuming rdl2Objects lookup is possible or we check nodeObject type directly
+            // We need to check if 'type' matches "DwaBaseLayerable"
+            // The object structure has `nodeObject.type` which is usually the RDL class name?
+            // Wait, models.js says `this.type = null`. createRdlObject sets `obj.type = type.class_name` or similar.
+            // Let's check if the rdl definition says DwaBaseLayerable.
+            // We can look up the class string in rdl2Objects.scene_classes
+
+            let isLayerable = false;
+            if (rdl2Objects && rdl2Objects.scene_classes && clickedObject.className) {
+                const def = rdl2Objects.scene_classes[clickedObject.className];
+                if (def && def.type === 'DwaBaseLayerable') {
+                    isLayerable = true;
+                }
+            }
+
+            if (isLayerable) {
+                options.push({
+                    label: "Load in Layer Editor",
+                    action: () => {
+                        activeLayerMaterial = clickedObject;
+                        updateLayerStackContainer();
+                        // Switch to tab
+                        const layersStackTab = document.getElementById('layersStackTab');
+                        if (layersStackTab) layersStackTab.click();
+                    }
+                });
+                options.push({ separator: true });
+            }
+
+            // Standard object options
+            options.push({
+                label: "Delete",
+                action: () => {
+                    selectedObject = clickedObject;
+                    deleteSelectedObject();
+                }
+            });
+
+            showContextMenu(e.clientX, e.clientY, options);
+        }
+    });
 }
 
 function setupKeyboardEvents() {

@@ -191,6 +191,48 @@ function showMaterialContextMenu(x, y, callback) {
             window.removeEventListener('click', closeMenu);
         }
     };
-    // Delay adding listener to avoid immediate close
     setTimeout(() => window.addEventListener('click', closeMenu), 0);
+}
+
+function updateLayerStackContainer() {
+    const stackContainer = document.getElementById('layersStack').querySelector('.sidebar-content');
+    stackContainer.innerHTML = '';
+
+    if (!activeLayerMaterial) {
+        const p = document.createElement('p');
+        p.style.color = 'var(--text-secondary)';
+        p.style.fontStyle = 'italic';
+        p.textContent = 'No active layer material';
+        stackContainer.appendChild(p);
+        return;
+    }
+
+    if (!activeLayerMaterial.layeredShader) {
+        // Init if missing
+        activeLayerMaterial.layeredShader = new LayeredShader(activeLayerMaterial);
+    }
+
+    const ls = activeLayerMaterial.layeredShader;
+
+    // Render Base Material
+    const baseDiv = document.createElement('div');
+    baseDiv.className = 'layer-stack-item base-material';
+    baseDiv.style.padding = '8px';
+    baseDiv.style.border = '1px solid var(--border-color)';
+    baseDiv.style.marginBottom = '4px';
+    baseDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+    baseDiv.textContent = `Base: ${ls.baseMaterial.name} (${ls.baseMaterial.className})`;
+    stackContainer.appendChild(baseDiv);
+
+    // Render Fill Layers
+    ls.fillLayers.forEach((layer, idx) => {
+        const layerDiv = document.createElement('div');
+        layerDiv.className = 'layer-stack-item fill-layer';
+        layerDiv.style.padding = '8px';
+        layerDiv.style.border = '1px solid var(--border-color)';
+        layerDiv.style.marginBottom = '4px';
+        layerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+        layerDiv.textContent = `Fill Layer ${idx + 1}`;
+        stackContainer.appendChild(layerDiv);
+    });
 }

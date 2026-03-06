@@ -782,6 +782,623 @@
 			},
 			"type" : "LightFilter"
 		},
+		"BaseMaterial" : 
+		{
+			"attributes" : 
+			{
+				"anisotropic_direction" : 
+				{
+					"aliases" : [ "anisotropic direction" ],
+					"attrType" : "Vec2f",
+					"bindable" : true,
+					"default" : [ 1.0, 0.0 ],
+					"metadata" : 
+					{
+						"label" : "anisotropic direction"
+					},
+					"order" : 39
+				},
+				"anisotropy" : 
+				{
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 0.0,
+					"order" : 38
+				},
+				"casts_caustics" : 
+				{
+					"aliases" : [ "casts caustics" ],
+					"attrType" : "Bool",
+					"default" : false,
+					"metadata" : 
+					{
+						"label" : "casts caustics"
+					},
+					"order" : 41
+				},
+				"diffuse" : 
+				{
+					"attrType" : "Bool",
+					"default" : true,
+					"order" : 5
+				},
+				"diffuse_color" : 
+				{
+					"aliases" : [ "diffuse color" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "diffuse color",
+						"recolorSample" : "true",
+						"recolorable" : "true"
+					},
+					"order" : 6
+				},
+				"diffuse_factor" : 
+				{
+					"aliases" : [ "diffuse factor" ],
+					"attrType" : "Float",
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"label" : "diffuse factor"
+					},
+					"order" : 7
+				},
+				"directional_diffuse" : 
+				{
+					"aliases" : [ "directional diffuse" ],
+					"attrType" : "Bool",
+					"default" : true,
+					"metadata" : 
+					{
+						"label" : "directional diffuse"
+					},
+					"order" : 13
+				},
+				"directional_diffuse_color" : 
+				{
+					"aliases" : [ "directional diffuse color" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "directional diffuse color"
+					},
+					"order" : 14
+				},
+				"directional_diffuse_factor" : 
+				{
+					"aliases" : [ "directional diffuse factor" ],
+					"attrType" : "Float",
+					"default" : 0.0,
+					"metadata" : 
+					{
+						"label" : "directional diffuse factor"
+					},
+					"order" : 15
+				},
+				"directional_diffuse_roughness" : 
+				{
+					"aliases" : [ "directional diffuse roughness" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 0.5,
+					"metadata" : 
+					{
+						"label" : "directional diffuse roughness"
+					},
+					"order" : 16
+				},
+				"emission" : 
+				{
+					"attrType" : "Bool",
+					"default" : true,
+					"order" : 30
+				},
+				"emission_color" : 
+				{
+					"aliases" : [ "emission color" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "emission color"
+					},
+					"order" : 31
+				},
+				"emission_factor" : 
+				{
+					"aliases" : [ "emission factor" ],
+					"attrType" : "Float",
+					"default" : 0.0,
+					"metadata" : 
+					{
+						"label" : "emission factor"
+					},
+					"order" : 32
+				},
+				"extra_aovs" : 
+				{
+					"attrType" : "SceneObject*",
+					"default" : false,
+					"interface" : "Map",
+					"metadata" : 
+					{
+						"comment" : "Bind this attribute to a 'ListMap' that contains references to ExtraAovMaps that specify additional outputs that can be assigned to a RenderOutput \"light aov\" result"
+					},
+					"order" : 0
+				},
+				"fresnel_factor" : 
+				{
+					"aliases" : [ "fresnel factor" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"label" : "fresnel factor"
+					},
+					"order" : 37
+				},
+				"index_of_refraction" : 
+				{
+					"aliases" : [ "index of refraction" ],
+					"attrType" : "Float",
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"comment" : "affects transmission and translucency",
+						"label" : "index of refraction"
+					},
+					"order" : 40
+				},
+				"input_normal" : 
+				{
+					"aliases" : [ "input normal" ],
+					"attrType" : "Vec3f",
+					"bindable" : true,
+					"default" : [ 0.0, 0.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "input normal"
+					},
+					"order" : 33
+				},
+				"input_normal_dial" : 
+				{
+					"aliases" : [ "input normal dial" ],
+					"attrType" : "Float",
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"label" : "input normal dial"
+					},
+					"order" : 35
+				},
+				"input_normal_space" : 
+				{
+					"aliases" : [ "input normal space" ],
+					"attrType" : "Int",
+					"default" : 0,
+					"enum" : 
+					{
+						"render" : 1,
+						"tangent" : 0
+					},
+					"metadata" : 
+					{
+						"comment" : "Specifies what space the input normal is in.  Usually this is tangent space for texture maps and render space for projections",
+						"label" : "input normal space"
+					},
+					"order" : 34
+				},
+				"iridescence" : 
+				{
+					"attrType" : "Bool",
+					"default" : false,
+					"order" : 42
+				},
+				"iridescence_at_0_incidence" : 
+				{
+					"aliases" : [ "iridescence at 0 incidence" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"comment" : "Iridescence effect at 0 degree viewing angle",
+						"label" : "iridescence at 0 incidence"
+					},
+					"order" : 49
+				},
+				"iridescence_exponent" : 
+				{
+					"aliases" : [ "iridescence exponent" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"comment" : "Tightens or broadens the distribution of colors",
+						"label" : "iridescence exponent"
+					},
+					"order" : 48
+				},
+				"iridescence_factor" : 
+				{
+					"aliases" : [ "iridescence factor" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"comment" : "overall multiplier on effect of iridescence",
+						"label" : "iridescence factor"
+					},
+					"order" : 43
+				},
+				"iridescence_flip_hue_direction" : 
+				{
+					"aliases" : [ "iridescence flip hue direction" ],
+					"attrType" : "Bool",
+					"default" : false,
+					"metadata" : 
+					{
+						"label" : "iridescence flip hue direction"
+					},
+					"order" : 46
+				},
+				"iridescence_primary_color" : 
+				{
+					"aliases" : [ "iridescence primary color" ],
+					"attrType" : "Rgb",
+					"default" : [ 1.0, 0.0, 0.0 ],
+					"metadata" : 
+					{
+						"comment" : "First color to interpolate from around the hue wheel",
+						"label" : "iridescence primary color"
+					},
+					"order" : 44
+				},
+				"iridescence_secondary_color" : 
+				{
+					"aliases" : [ "iridescence secondary color" ],
+					"attrType" : "Rgb",
+					"default" : [ 1.0, 0.0, 0.0 ],
+					"metadata" : 
+					{
+						"comment" : "Second color to interpolate to around the hue wheel",
+						"label" : "iridescence secondary color"
+					},
+					"order" : 45
+				},
+				"iridescence_thickness" : 
+				{
+					"aliases" : [ "iridescence thickness" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"comment" : "Controls how much the color spectrum is repeated",
+						"label" : "iridescence thickness"
+					},
+					"order" : 47
+				},
+				"label" : 
+				{
+					"attrType" : "String",
+					"default" : "",
+					"metadata" : 
+					{
+						"comment" : "label used in material and light aovs"
+					},
+					"order" : 1
+				},
+				"opacity" : 
+				{
+					"attrType" : "Bool",
+					"default" : true,
+					"order" : 28
+				},
+				"opacity_factor" : 
+				{
+					"aliases" : [ "opacity factor" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"label" : "opacity factor"
+					},
+					"order" : 29
+				},
+				"priority" : 
+				{
+					"aliases" : [ "priority" ],
+					"attrType" : "Int",
+					"default" : 0,
+					"metadata" : 
+					{
+						"comment" : "The material's place in an order of precedence for overlapping dielectrics. A value of 0 means the priority should be ignored. Materials with lower numbers (higher priority) \"override\" materials with higher numbers (lower priority).  To enable automatic removal of self-overlapping geometry, a non-zero priority must be set on the geometry's material."
+					},
+					"order" : 2
+				},
+				"record_reflected_cryptomatte" : 
+				{
+					"attrType" : "Bool",
+					"default" : false,
+					"metadata" : 
+					{
+						"comment" : "Indicates whether the next reflected surface should appear in the reflected cryptomatte layers",
+						"label" : "record reflected cryptomatte"
+					},
+					"order" : 3
+				},
+				"record_refracted_cryptomatte" : 
+				{
+					"aliases" : 
+					[
+						"invisible_refractive_cryptomatte",
+						"invisible refractive cryptomatte"
+					],
+					"attrType" : "Bool",
+					"default" : false,
+					"metadata" : 
+					{
+						"comment" : "Indicates whether the next refracted surface should appear in the refracted cryptomatte layers",
+						"label" : "record refracted cryptomatte"
+					},
+					"order" : 4
+				},
+				"retroreflectivity" : 
+				{
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 0.0,
+					"order" : 11
+				},
+				"specular" : 
+				{
+					"attrType" : "Bool",
+					"default" : true,
+					"order" : 8
+				},
+				"specular_color" : 
+				{
+					"aliases" : [ "specular color" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "specular color",
+						"recolorable" : "true"
+					},
+					"order" : 9
+				},
+				"specular_factor" : 
+				{
+					"aliases" : [ "specular factor" ],
+					"attrType" : "Float",
+					"default" : 0.10000000149011612,
+					"metadata" : 
+					{
+						"label" : "specular factor"
+					},
+					"order" : 10
+				},
+				"specular_roughness" : 
+				{
+					"aliases" : [ "specular roughness" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 0.30000001192092896,
+					"metadata" : 
+					{
+						"label" : "specular roughness"
+					},
+					"order" : 12
+				},
+				"translucency" : 
+				{
+					"attrType" : "Bool",
+					"default" : true,
+					"order" : 17
+				},
+				"translucency_color" : 
+				{
+					"aliases" : [ "translucency color" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "translucency color"
+					},
+					"order" : 18
+				},
+				"translucency_factor" : 
+				{
+					"aliases" : [ "translucency factor" ],
+					"attrType" : "Float",
+					"default" : 0.0,
+					"metadata" : 
+					{
+						"label" : "translucency factor"
+					},
+					"order" : 19
+				},
+				"translucency_falloff" : 
+				{
+					"aliases" : [ "translucency falloff" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "translucency falloff"
+					},
+					"order" : 20
+				},
+				"translucency_radius" : 
+				{
+					"aliases" : [ "translucency radius" ],
+					"attrType" : "Float",
+					"bindable" : true,
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"label" : "translucency radius"
+					},
+					"order" : 21
+				},
+				"translucent_diffuse" : 
+				{
+					"aliases" : [ "translucent diffuse" ],
+					"attrType" : "Bool",
+					"default" : false,
+					"metadata" : 
+					{
+						"label" : "translucent diffuse"
+					},
+					"order" : 25
+				},
+				"translucent_diffuse_color" : 
+				{
+					"aliases" : [ "translucent diffuse color" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "translucent diffuse color"
+					},
+					"order" : 26
+				},
+				"translucent_diffuse_factor" : 
+				{
+					"aliases" : [ "translucent diffuse factor" ],
+					"attrType" : "Float",
+					"default" : 1.0,
+					"metadata" : 
+					{
+						"label" : "translucent diffuse factor"
+					},
+					"order" : 27
+				},
+				"transmission" : 
+				{
+					"attrType" : "Bool",
+					"default" : true,
+					"order" : 22
+				},
+				"transmission_color" : 
+				{
+					"aliases" : [ "transmission color" ],
+					"attrType" : "Rgb",
+					"bindable" : true,
+					"default" : [ 1.0, 1.0, 1.0 ],
+					"metadata" : 
+					{
+						"label" : "transmission color"
+					},
+					"order" : 23
+				},
+				"transmission_factor" : 
+				{
+					"aliases" : [ "transmission factor" ],
+					"attrType" : "Float",
+					"default" : 0.0,
+					"metadata" : 
+					{
+						"label" : "transmission factor"
+					},
+					"order" : 24
+				},
+				"use_fresnel" : 
+				{
+					"aliases" : [ "use fresnel" ],
+					"attrType" : "Bool",
+					"default" : true,
+					"metadata" : 
+					{
+						"label" : "use fresnel"
+					},
+					"order" : 36
+				}
+			},
+			"grouping" : 
+			{
+				"groups" : 
+				{
+					"Diffuse" : [ "diffuse", "diffuse_color", "diffuse_factor" ],
+					"Directional Diffuse" : 
+					[
+						"directional_diffuse",
+						"directional_diffuse_color",
+						"directional_diffuse_factor",
+						"directional_diffuse_roughness"
+					],
+					"Emission" : [ "emission", "emission_color", "emission_factor" ],
+					"Iridescence" : 
+					[
+						"iridescence",
+						"iridescence_factor",
+						"iridescence_primary_color",
+						"iridescence_secondary_color",
+						"iridescence_flip_hue_direction",
+						"iridescence_thickness",
+						"iridescence_exponent",
+						"iridescence_at_0_incidence"
+					],
+					"Normal" : [ "input_normal_space" ],
+					"Opacity" : [ "opacity", "opacity_factor" ],
+					"Specular" : 
+					[
+						"specular",
+						"specular_color",
+						"specular_factor",
+						"retroreflectivity",
+						"specular_roughness"
+					],
+					"Translucency" : 
+					[
+						"translucency",
+						"translucency_color",
+						"translucency_factor",
+						"translucency_falloff",
+						"translucency_radius"
+					],
+					"Translucent Diffuse" : 
+					[
+						"translucent_diffuse",
+						"translucent_diffuse_color",
+						"translucent_diffuse_factor"
+					],
+					"Transmission" : [ "transmission", "transmission_color", "transmission_factor" ]
+				},
+				"order" : 
+				[
+					"Diffuse",
+					"Specular",
+					"Directional Diffuse",
+					"Translucency",
+					"Transmission",
+					"Translucent Diffuse",
+					"Opacity",
+					"Emission",
+					"Normal",
+					"Iridescence"
+				]
+			},
+			"type" : "Material"
+		},
 		"BaseVolume" : 
 		{
 			"attributes" : 
@@ -7662,7 +8279,7 @@
 						"comment" : "allows continuation of caustic light paths.",
 						"label" : "casts caustics"
 					},
-					"order" : 103
+					"order" : 102
 				},
 				"clearcoat" : 
 				{
@@ -7780,20 +8397,6 @@
 					},
 					"order" : 17
 				},
-				"crease_attenuation" : 
-				{
-					"attrType" : "Float",
-					"bindable" : true,
-					"default" : 0.0,
-					"metadata" : 
-					{
-						"comment" : "This mitigates the over-brightening around creases which random walk SSS can cause.",
-						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
-						"label" : "crease attenuation",
-						"min" : "0.0f"
-					},
-					"order" : 80
-				},
 				"diffuse_lightset" : 
 				{
 					"attrType" : "SceneObject*",
@@ -7832,7 +8435,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission"
 					},
-					"order" : 83
+					"order" : 82
 				},
 				"diffuse_transmission_blending_behavior" : 
 				{
@@ -7850,7 +8453,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission blending behavior"
 					},
-					"order" : 85
+					"order" : 84
 				},
 				"diffuse_transmission_color" : 
 				{
@@ -7864,7 +8467,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission color"
 					},
-					"order" : 84
+					"order" : 83
 				},
 				"dispersion_abbe_number" : 
 				{
@@ -7878,7 +8481,7 @@
 						"max" : "100.0f",
 						"min" : "0.0f"
 					},
-					"order" : 94
+					"order" : 93
 				},
 				"emission" : 
 				{
@@ -7891,7 +8494,7 @@
 						"comment" : "the energy emitted from this material",
 						"enable if" : "OrderedDict([('show_emission', 'true')])"
 					},
-					"order" : 96
+					"order" : 95
 				},
 				"enable_sss_input_normal" : 
 				{
@@ -7904,7 +8507,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "enable sss input normal"
 					},
-					"order" : 81
+					"order" : 80
 				},
 				"extra_aovs" : 
 				{
@@ -8392,7 +8995,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true'), ('use_independent_transmission_refractive_index', 'true')])",
 						"label" : "independent transmission refractive index"
 					},
-					"order" : 90
+					"order" : 89
 				},
 				"independent_transmission_roughness" : 
 				{
@@ -8407,7 +9010,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 92
+					"order" : 91
 				},
 				"input_normal" : 
 				{
@@ -8420,7 +9023,7 @@
 						"comment" : "specifies an alternate shading normal in the tangent frame (normal map)",
 						"label" : "input normal"
 					},
-					"order" : 97
+					"order" : 96
 				},
 				"input_normal_dial" : 
 				{
@@ -8435,7 +9038,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 98
+					"order" : 97
 				},
 				"iridescence" : 
 				{
@@ -8718,7 +9321,7 @@
 						"enable if" : "OrderedDict([('normal_AA_strategy', '1')])",
 						"label" : "normal AA dial"
 					},
-					"order" : 100
+					"order" : 99
 				},
 				"normal_AA_strategy" : 
 				{
@@ -8734,7 +9337,7 @@
 						"comment" : "Normal map anti-aliasing strategy to use - 'none' uses regular mip-mapping, 'toksvig' increases specular roughness corresponding to the geometric details filtered out because of mip-mapping.",
 						"label" : "normal AA strategy"
 					},
-					"order" : 99
+					"order" : 98
 				},
 				"presence" : 
 				{
@@ -8745,7 +9348,7 @@
 					{
 						"comment" : "controls the visibility of this object. Useful for fading an object in/out, or to specify a cut-out mask on thin single-sided geometry (eg. a complex leaf texture on a simple card)."
 					},
-					"order" : 101
+					"order" : 100
 				},
 				"priority" : 
 				{
@@ -8808,7 +9411,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true'), ('bssrdf', 'random walk')])",
 						"label" : "resolve self intersections"
 					},
-					"order" : 82
+					"order" : 81
 				},
 				"roughness" : 
 				{
@@ -8901,7 +9504,7 @@
 						"comment" : "enables/disable emission",
 						"label" : "show emission"
 					},
-					"order" : 95
+					"order" : 94
 				},
 				"show_fuzz" : 
 				{
@@ -8947,7 +9550,7 @@
 						"comment" : "enables/disables refractive solid model",
 						"label" : "show transmission"
 					},
-					"order" : 87
+					"order" : 86
 				},
 				"specular" : 
 				{
@@ -8961,7 +9564,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 104
+					"order" : 103
 				},
 				"specular_lightset" : 
 				{
@@ -9005,7 +9608,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "sss trace set"
 					},
-					"order" : 105
+					"order" : 104
 				},
 				"thin_geometry" : 
 				{
@@ -9017,7 +9620,7 @@
 						"comment" : "enables proper shading of infinitely thin geometry such as paper or leaves.",
 						"label" : "thin geometry"
 					},
-					"order" : 102
+					"order" : 101
 				},
 				"transmission" : 
 				{
@@ -9028,7 +9631,7 @@
 					{
 						"comment" : "enables/disables refractive solid model (binary 0|1 for plausibility)"
 					},
-					"order" : 86
+					"order" : 85
 				},
 				"transmission_color" : 
 				{
@@ -9042,7 +9645,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "transmission color"
 					},
-					"order" : 88
+					"order" : 87
 				},
 				"use_absorbing_fuzz_fibers" : 
 				{
@@ -9066,7 +9669,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "use dispersion"
 					},
-					"order" : 93
+					"order" : 92
 				},
 				"use_independent_clearcoat_normal" : 
 				{
@@ -9092,7 +9695,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "use independent transmission refractive index"
 					},
-					"order" : 89
+					"order" : 88
 				},
 				"use_independent_transmission_roughness" : 
 				{
@@ -9104,7 +9707,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "use independent transmission roughness"
 					},
-					"order" : 91
+					"order" : 90
 				}
 			},
 			"grouping" : 
@@ -9136,7 +9739,6 @@
 						"bssrdf",
 						"scattering_color",
 						"scattering_radius",
-						"crease_attenuation",
 						"enable_sss_input_normal",
 						"resolve_self_intersections",
 						"diffuse_transmission",
@@ -9251,7 +9853,6 @@
 				"TMI" : 
 				{
 					"attrType" : "Rgb",
-					"bindable" : true,
 					"default" : [ 0.0, 0.0, 0.0 ],
 					"metadata" : 
 					{
@@ -9319,7 +9920,7 @@
 				{
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "DwaBase",
+					"interface" : "DwaBaseLayerable",
 					"metadata" : 
 					{
 						"comment" : "Material to modify",
@@ -14315,21 +14916,7 @@
 						"comment" : "allows continuation of caustic light paths.",
 						"label" : "casts caustics"
 					},
-					"order" : 88
-				},
-				"crease_attenuation" : 
-				{
-					"attrType" : "Float",
-					"bindable" : true,
-					"default" : 0.0,
-					"metadata" : 
-					{
-						"comment" : "This mitigates the over-brightening around creases which random walk SSS can cause.",
-						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
-						"label" : "crease attenuation",
-						"min" : "0.0f"
-					},
-					"order" : 74
+					"order" : 87
 				},
 				"diffuse_lightset" : 
 				{
@@ -14369,7 +14956,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission"
 					},
-					"order" : 77
+					"order" : 76
 				},
 				"diffuse_transmission_blending_behavior" : 
 				{
@@ -14387,7 +14974,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission blending behavior"
 					},
-					"order" : 79
+					"order" : 78
 				},
 				"diffuse_transmission_color" : 
 				{
@@ -14401,7 +14988,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission color"
 					},
-					"order" : 78
+					"order" : 77
 				},
 				"emission" : 
 				{
@@ -14414,7 +15001,7 @@
 						"comment" : "the energy emitted from this material",
 						"enable if" : "OrderedDict([('show_emission', 'true')])"
 					},
-					"order" : 81
+					"order" : 80
 				},
 				"enable_sss_input_normal" : 
 				{
@@ -14427,7 +15014,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "enable sss input normal"
 					},
-					"order" : 75
+					"order" : 74
 				},
 				"extra_aovs" : 
 				{
@@ -14915,7 +15502,7 @@
 						"comment" : "specifies an alternate shading normal in the tangent frame (normal map)",
 						"label" : "input normal"
 					},
-					"order" : 82
+					"order" : 81
 				},
 				"input_normal_dial" : 
 				{
@@ -14930,7 +15517,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 83
+					"order" : 82
 				},
 				"iridescence" : 
 				{
@@ -15245,7 +15832,7 @@
 						"enable if" : "OrderedDict([('normal_AA_strategy', '1')])",
 						"label" : "normal AA dial"
 					},
-					"order" : 85
+					"order" : 84
 				},
 				"normal_AA_strategy" : 
 				{
@@ -15261,7 +15848,7 @@
 						"comment" : "Normal map anti-aliasing strategy to use - 'none' uses regular mip-mapping, 'toksvig' increases specular roughness corresponding to the geometric details filtered out because of mip-mapping.",
 						"label" : "normal AA strategy"
 					},
-					"order" : 84
+					"order" : 83
 				},
 				"presence" : 
 				{
@@ -15272,7 +15859,7 @@
 					{
 						"comment" : "controls the visibility of this object. Useful for fading an object in/out, or to specify a cut-out mask on thin single-sided geometry (eg. a complex leaf texture on a simple card)."
 					},
-					"order" : 86
+					"order" : 85
 				},
 				"priority" : 
 				{
@@ -15335,7 +15922,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true'), ('bssrdf', 'random walk')])",
 						"label" : "resolve self intersections"
 					},
-					"order" : 76
+					"order" : 75
 				},
 				"roughness" : 
 				{
@@ -15416,7 +16003,7 @@
 						"comment" : "enables/disable emission",
 						"label" : "show emission"
 					},
-					"order" : 80
+					"order" : 79
 				},
 				"show_fuzz" : 
 				{
@@ -15476,7 +16063,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 89
+					"order" : 88
 				},
 				"specular_lightset" : 
 				{
@@ -15520,7 +16107,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "sss trace set"
 					},
-					"order" : 90
+					"order" : 89
 				},
 				"thin_geometry" : 
 				{
@@ -15532,7 +16119,7 @@
 						"comment" : "enables proper shading of infinitely thin geometry such as paper or leaves.",
 						"label" : "thin geometry"
 					},
-					"order" : 87
+					"order" : 86
 				},
 				"use_absorbing_fuzz_fibers" : 
 				{
@@ -15575,7 +16162,6 @@
 						"bssrdf",
 						"scattering_color",
 						"scattering_radius",
-						"crease_attenuation",
 						"enable_sss_input_normal",
 						"resolve_self_intersections",
 						"diffuse_transmission",
@@ -15735,7 +16321,7 @@
 						"comment" : "allows continuation of caustic light paths.",
 						"label" : "casts caustics"
 					},
-					"order" : 89
+					"order" : 88
 				},
 				"clearcoat" : 
 				{
@@ -15853,20 +16439,6 @@
 					},
 					"order" : 17
 				},
-				"crease_attenuation" : 
-				{
-					"attrType" : "Float",
-					"bindable" : true,
-					"default" : 0.0,
-					"metadata" : 
-					{
-						"comment" : "This mitigates the over-brightening around creases which random walk SSS can cause.",
-						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
-						"label" : "crease attenuation",
-						"min" : "0.0f"
-					},
-					"order" : 75
-				},
 				"diffuse_roughness" : 
 				{
 					"attrType" : "Float",
@@ -15893,7 +16465,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission"
 					},
-					"order" : 78
+					"order" : 77
 				},
 				"diffuse_transmission_blending_behavior" : 
 				{
@@ -15911,7 +16483,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission blending behavior"
 					},
-					"order" : 80
+					"order" : 79
 				},
 				"diffuse_transmission_color" : 
 				{
@@ -15925,7 +16497,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission color"
 					},
-					"order" : 79
+					"order" : 78
 				},
 				"emission" : 
 				{
@@ -15938,7 +16510,7 @@
 						"comment" : "the energy emitted from this material",
 						"enable if" : "OrderedDict([('show_emission', 'true')])"
 					},
-					"order" : 82
+					"order" : 81
 				},
 				"enable_sss_input_normal" : 
 				{
@@ -15951,7 +16523,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "enable sss input normal"
 					},
-					"order" : 76
+					"order" : 75
 				},
 				"extra_aovs" : 
 				{
@@ -16439,7 +17011,7 @@
 						"comment" : "specifies an alternate shading normal in the tangent frame (normal map)",
 						"label" : "input normal"
 					},
-					"order" : 83
+					"order" : 82
 				},
 				"input_normal_dial" : 
 				{
@@ -16454,7 +17026,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 84
+					"order" : 83
 				},
 				"iridescence" : 
 				{
@@ -16696,7 +17268,7 @@
 						"enable if" : "OrderedDict([('normal_AA_strategy', '1')])",
 						"label" : "normal AA dial"
 					},
-					"order" : 86
+					"order" : 85
 				},
 				"normal_AA_strategy" : 
 				{
@@ -16712,7 +17284,7 @@
 						"comment" : "Normal map anti-aliasing strategy to use - 'none' uses regular mip-mapping, 'toksvig' increases specular roughness corresponding to the geometric details filtered out because of mip-mapping.",
 						"label" : "normal AA strategy"
 					},
-					"order" : 85
+					"order" : 84
 				},
 				"presence" : 
 				{
@@ -16723,7 +17295,7 @@
 					{
 						"comment" : "controls the visibility of this object. Useful for fading an object in/out, or to specify a cut-out mask on thin single-sided geometry (eg. a complex leaf texture on a simple card)."
 					},
-					"order" : 87
+					"order" : 86
 				},
 				"priority" : 
 				{
@@ -16786,7 +17358,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true'), ('bssrdf', 'random walk')])",
 						"label" : "resolve self intersections"
 					},
-					"order" : 77
+					"order" : 76
 				},
 				"roughness" : 
 				{
@@ -16879,7 +17451,7 @@
 						"comment" : "enables/disable emission",
 						"label" : "show emission"
 					},
-					"order" : 81
+					"order" : 80
 				},
 				"show_fuzz" : 
 				{
@@ -16927,7 +17499,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 90
+					"order" : 89
 				},
 				"specular_model" : 
 				{
@@ -16959,7 +17531,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "sss trace set"
 					},
-					"order" : 91
+					"order" : 90
 				},
 				"thin_geometry" : 
 				{
@@ -16971,7 +17543,7 @@
 						"comment" : "enables proper shading of infinitely thin geometry such as paper or leaves.",
 						"label" : "thin geometry"
 					},
-					"order" : 88
+					"order" : 87
 				},
 				"use_absorbing_fuzz_fibers" : 
 				{
@@ -17027,7 +17599,6 @@
 						"bssrdf",
 						"scattering_color",
 						"scattering_radius",
-						"crease_attenuation",
 						"enable_sss_input_normal",
 						"resolve_self_intersections",
 						"diffuse_transmission",
@@ -18057,7 +18628,7 @@
 						"comment" : "allows continuation of caustic light paths.",
 						"label" : "casts caustics"
 					},
-					"order" : 170
+					"order" : 169
 				},
 				"clearcoat" : 
 				{
@@ -18195,20 +18766,6 @@
 					},
 					"order" : 122
 				},
-				"crease_attenuation" : 
-				{
-					"attrType" : "Float",
-					"bindable" : true,
-					"default" : 0.0,
-					"metadata" : 
-					{
-						"comment" : "This mitigates the over-brightening around creases which random walk SSS can cause.",
-						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
-						"label" : "crease attenuation",
-						"min" : "0.0f"
-					},
-					"order" : 147
-				},
 				"diffuse_flatness" : 
 				{
 					"attrType" : "Float",
@@ -18294,7 +18851,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission"
 					},
-					"order" : 150
+					"order" : 149
 				},
 				"diffuse_transmission_blending_behavior" : 
 				{
@@ -18312,7 +18869,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission blending behavior"
 					},
-					"order" : 152
+					"order" : 151
 				},
 				"diffuse_transmission_color" : 
 				{
@@ -18326,7 +18883,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "diffuse transmission color"
 					},
-					"order" : 151
+					"order" : 150
 				},
 				"dispersion_abbe_number" : 
 				{
@@ -18340,7 +18897,7 @@
 						"max" : "100.0f",
 						"min" : "0.0f"
 					},
-					"order" : 161
+					"order" : 160
 				},
 				"emission" : 
 				{
@@ -18353,7 +18910,7 @@
 						"comment" : "the energy emitted from this material",
 						"enable if" : "OrderedDict([('show_emission', 'true')])"
 					},
-					"order" : 163
+					"order" : 162
 				},
 				"enable_sss_input_normal" : 
 				{
@@ -18366,7 +18923,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "enable sss input normal"
 					},
-					"order" : 148
+					"order" : 147
 				},
 				"extend_ramp" : 
 				{
@@ -18866,7 +19423,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true'), ('use_independent_transmission_refractive_index', 'true')])",
 						"label" : "independent transmission refractive index"
 					},
-					"order" : 157
+					"order" : 156
 				},
 				"independent_transmission_roughness" : 
 				{
@@ -18881,7 +19438,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 159
+					"order" : 158
 				},
 				"input_normal" : 
 				{
@@ -18894,7 +19451,7 @@
 						"comment" : "specifies an alternate shading normal in the tangent frame (normal map)",
 						"label" : "input normal"
 					},
-					"order" : 164
+					"order" : 163
 				},
 				"input_normal_dial" : 
 				{
@@ -18909,7 +19466,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 165
+					"order" : 164
 				},
 				"interpolations" : 
 				{
@@ -19207,7 +19764,7 @@
 						"enable if" : "OrderedDict([('normal_AA_strategy', '1')])",
 						"label" : "normal AA dial"
 					},
-					"order" : 167
+					"order" : 166
 				},
 				"normal_AA_strategy" : 
 				{
@@ -19223,7 +19780,7 @@
 						"comment" : "Normal map anti-aliasing strategy to use - 'none' uses regular mip-mapping, 'toksvig' increases specular roughness corresponding to the geometric details filtered out because of mip-mapping.",
 						"label" : "normal AA strategy"
 					},
-					"order" : 166
+					"order" : 165
 				},
 				"positions" : 
 				{
@@ -19248,7 +19805,7 @@
 					{
 						"comment" : "controls the visibility of this object. Useful for fading an object in/out, or to specify a cut-out mask on thin single-sided geometry (eg. a complex leaf texture on a simple card)."
 					},
-					"order" : 168
+					"order" : 167
 				},
 				"prevent_light_culling" : 
 				{
@@ -19259,7 +19816,7 @@
 						"comment" : "WARNING: Experimental and must be used with max_depth: 0 and only for non-photoreal looks. Prevents culling of lights so surfaces can be lit purely with respect to the shading normal irrespective of geometry",
 						"label" : "prevent light culling"
 					},
-					"order" : 172
+					"order" : 171
 				},
 				"priority" : 
 				{
@@ -19614,7 +20171,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true'), ('bssrdf', 'random walk')])",
 						"label" : "resolve self intersections"
 					},
-					"order" : 149
+					"order" : 148
 				},
 				"roughness" : 
 				{
@@ -19707,7 +20264,7 @@
 						"comment" : "enables/disable emission",
 						"label" : "show emission"
 					},
-					"order" : 162
+					"order" : 161
 				},
 				"show_fuzz" : 
 				{
@@ -19753,7 +20310,7 @@
 						"comment" : "enables/disables refractive solid model",
 						"label" : "show transmission"
 					},
-					"order" : 154
+					"order" : 153
 				},
 				"specular" : 
 				{
@@ -19767,7 +20324,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 171
+					"order" : 170
 				},
 				"specular_lightset" : 
 				{
@@ -19812,7 +20369,7 @@
 						"enable if" : "OrderedDict([('show_diffuse', 'true')])",
 						"label" : "sss trace set"
 					},
-					"order" : 173
+					"order" : 172
 				},
 				"terminator_shift" : 
 				{
@@ -19839,7 +20396,7 @@
 						"comment" : "enables proper shading of infinitely thin geometry such as paper or leaves.",
 						"label" : "thin geometry"
 					},
-					"order" : 169
+					"order" : 168
 				},
 				"toon_specular_enable_indirect_reflections" : 
 				{
@@ -20379,7 +20936,7 @@
 						"max" : "1.0f",
 						"min" : "0.0f"
 					},
-					"order" : 153
+					"order" : 152
 				},
 				"transmission_color" : 
 				{
@@ -20393,7 +20950,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "transmission color"
 					},
-					"order" : 155
+					"order" : 154
 				},
 				"use_absorbing_fuzz_fibers" : 
 				{
@@ -20417,7 +20974,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "use dispersion"
 					},
-					"order" : 160
+					"order" : 159
 				},
 				"use_independent_clearcoat_normal" : 
 				{
@@ -20443,7 +21000,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "use independent transmission refractive index"
 					},
-					"order" : 156
+					"order" : 155
 				},
 				"use_independent_transmission_roughness" : 
 				{
@@ -20455,7 +21012,7 @@
 						"enable if" : "OrderedDict([('show_transmission', 'true')])",
 						"label" : "use independent transmission roughness"
 					},
-					"order" : 158
+					"order" : 157
 				}
 			},
 			"grouping" : 
@@ -20514,7 +21071,6 @@
 						"bssrdf",
 						"scattering_color",
 						"scattering_radius",
-						"crease_attenuation",
 						"enable_sss_input_normal",
 						"resolve_self_intersections",
 						"diffuse_transmission",
@@ -20666,7 +21222,7 @@
 				{
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "DwaBase",
+					"interface" : "Material",
 					"metadata" : 
 					{
 						"comment" : "material to use on back-facing surfaces",
@@ -20760,7 +21316,7 @@
 				{
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "DwaBase",
+					"interface" : "Material",
 					"metadata" : 
 					{
 						"comment" : "material to use on front-facing surfaces",
@@ -22498,7 +23054,7 @@
 				{
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "Node",
+					"interface" : "Geometry",
 					"metadata" : 
 					{
 						"comment" : "Use the provided object's transformation space (only used if object space is also specified)"
@@ -26469,7 +27025,6 @@
 				"offset" : 
 				{
 					"attrType" : "Vec2f",
-					"bindable" : true,
 					"default" : [ 0.0, 0.0 ],
 					"metadata" : 
 					{
@@ -26538,7 +27093,6 @@
 				"scale" : 
 				{
 					"attrType" : "Vec2f",
-					"bindable" : true,
 					"default" : [ 1.0, 1.0 ],
 					"metadata" : 
 					{
@@ -26672,7 +27226,6 @@
 				"offset" : 
 				{
 					"attrType" : "Vec2f",
-					"bindable" : true,
 					"default" : [ 0.0, 0.0 ],
 					"metadata" : 
 					{
@@ -26705,7 +27258,6 @@
 				"scale" : 
 				{
 					"attrType" : "Vec2f",
-					"bindable" : true,
 					"default" : [ 1.0, 1.0 ],
 					"metadata" : 
 					{
@@ -27069,79 +27621,6 @@
 			"type" : "TraceSet"
 		},
 		"LayerMap" : 
-		{
-			"attributes" : 
-			{
-				"input_A" : 
-				{
-					"aliases" : [ "input A" ],
-					"attrType" : "Rgb",
-					"bindable" : true,
-					"default" : [ 1.0, 1.0, 1.0 ],
-					"metadata" : 
-					{
-						"comment" : "Foreground color to blend",
-						"label" : "input A"
-					},
-					"order" : 0
-				},
-				"input_B" : 
-				{
-					"aliases" : [ "input B" ],
-					"attrType" : "Rgb",
-					"bindable" : true,
-					"default" : [ 1.0, 1.0, 1.0 ],
-					"metadata" : 
-					{
-						"comment" : "Background color to blend",
-						"label" : "input B"
-					},
-					"order" : 1
-				},
-				"mask" : 
-				{
-					"attrType" : "Float",
-					"bindable" : true,
-					"default" : 1.0,
-					"metadata" : 
-					{
-						"comment" : "Blending amount"
-					},
-					"order" : 2
-				},
-				"mode" : 
-				{
-					"attrType" : "Int",
-					"default" : 1,
-					"enum" : 
-					{
-						"add" : 2,
-						"color burn" : 11,
-						"color dodge" : 10,
-						"darken" : 8,
-						"difference" : 14,
-						"exclusion" : 15,
-						"hard light" : 12,
-						"lighten" : 9,
-						"multiply" : 4,
-						"off" : 0,
-						"over" : 1,
-						"overlay" : 6,
-						"overlay contrast" : 7,
-						"screen" : 5,
-						"soft light" : 13,
-						"subtract" : 3
-					},
-					"metadata" : 
-					{
-						"comment" : "Method of blending"
-					},
-					"order" : 3
-				}
-			},
-			"type" : "Map"
-		},
-		"LayerMap_v2" : 
 		{
 			"attributes" : 
 			{
@@ -28358,7 +28837,7 @@
 					"aliases" : [ "object space" ],
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "Node",
+					"interface" : "Geometry",
 					"metadata" : 
 					{
 						"comment" : "Directly connect object to use that object's space",
@@ -28782,7 +29261,7 @@
 					"aliases" : [ "object space" ],
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "Node",
+					"interface" : "Geometry",
 					"metadata" : 
 					{
 						"comment" : "Directly connect object to use that object's space.",
@@ -36912,7 +37391,7 @@
 				{
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "Node",
+					"interface" : "Geometry",
 					"order" : 6
 				},
 				"positions" : 
@@ -41728,7 +42207,7 @@
 					"default" : [ -2147483648, -2147483648, -2147483648, -2147483648 ],
 					"metadata" : 
 					{
-						"comment" : "Assuming no region_window is defined, an aperture_window of {xmin, ymin, xmax, ymax} overrides image_width using (xmax-xmin) and image_height using (ymax-ymin). Since the values are overrides, they are not restricted to lie in the ranges established by image_width and image_height, but can be arbitrarily large and/or negative. The lower left corner of the image rectangle corresponds to (xmin, ymin) and its midpoint corresponds to the camera's facing direction (the negative camera z-axis), and for projective cameras each boundary edge of the rectangle corresponds to a plane of the view frustum. However, the behavior changes when a region_window is defined - see the region_window documentation.",
+						"comment" : "The window of the camera aperture. Overrides image_width and image_height. Ordered as xmin, ymin, xmax, and ymax, with origin at the bottom-left.",
 						"label" : "aperture window"
 					},
 					"order" : 10
@@ -42021,7 +42500,7 @@
 					{
 						"comment" : "Determines whether to record presence bounces as separate cryptomatte samples."
 					},
-					"order" : 111
+					"order" : 114
 				},
 				"debug_console" : 
 				{
@@ -42033,7 +42512,7 @@
 						"comment" : "Specifies the port number for the debug console. When the debug console functionalities are enabled, you can use a telnet connection to send commands and control rendering behavior for debugging purposes.\n- A value of -1 disables all debug console functionality.\n- A positive value specifies a specific port number.\n- If you set the port number to 0, the kernel will find an available port for you and display the port number to stderr.",
 						"label" : "debug console"
 					},
-					"order" : 109
+					"order" : 112
 				},
 				"debug_pixel" : 
 				{
@@ -42046,6 +42525,42 @@
 						"label" : "debug pixel"
 					},
 					"order" : 108
+				},
+				"debug_rays_depth_range" : 
+				{
+					"aliases" : [ "debug rays depth range" ],
+					"attrType" : "IntVector",
+					"default" : [ -2147483648, -2147483648 ],
+					"metadata" : 
+					{
+						"comment" : "Deprecated.",
+						"label" : "debug rays depth range"
+					},
+					"order" : 111
+				},
+				"debug_rays_file" : 
+				{
+					"aliases" : [ "debug rays file" ],
+					"attrType" : "String",
+					"default" : "",
+					"metadata" : 
+					{
+						"comment" : "Deprecated.",
+						"label" : "debug rays file"
+					},
+					"order" : 109
+				},
+				"debug_rays_primary_range" : 
+				{
+					"aliases" : [ "debug rays primary range" ],
+					"attrType" : "IntVector",
+					"default" : [ -2147483648, -2147483648 ],
+					"metadata" : 
+					{
+						"comment" : "Deprecated.",
+						"label" : "debug rays primary range"
+					},
+					"order" : 110
 				},
 				"deep_curvature_tolerance" : 
 				{
@@ -42730,7 +43245,7 @@
 					"default" : [ -2147483648, -2147483648, -2147483648, -2147483648 ],
 					"metadata" : 
 					{
-						"comment" : "A region_window of {xmin, ymin, xmax, ymax} overrides the aperture_window if defined, and overrides image_width and image_height otherwise, to establish an image rectangle (xmax-xmin) in width and (ymax-ymin) in height, whose lower left corner corresponds to (xmin, ymin). Importantly, the coordinates are expressed relative to the origin of the aperture_window, or if aperture_window is not defined, relative to the lower-left corner of the image rectangle which would be obtained in the absence of a region_window. The region_window is not restricted to a subset of the aperture_window but can extend outside it, including asymmetrically. The view frustum is reshaped to correspond to the boundary of the region_window, and may therefore end up being skewed.",
+						"comment" : "Window that is rendered. Overrides image width / height (and overrides aperture window override). Order: xmin ymin xmax ymax, with origin at left bottom.",
 						"label" : "region window"
 					},
 					"order" : 11
@@ -42896,7 +43411,7 @@
 					"default" : [ -2147483648, -2147483648, -2147483648, -2147483648 ],
 					"metadata" : 
 					{
-						"comment" : "A sub_viewport of {xmin, ymin, xmax, ymax} restricts the rendered pixels to the rectangle defined by xmin <= x < xmax, ymin <= y < ymax, with origin at the lower left of the image rectangle - no matter how this has been defined (i.e. regardless of which combination of image_width, image_height, aperture_window, region_window has been used). Pixels outside the sub_viewport are left black. Any part of the sub_viewport lying outside the image rectangle has no effect on the result, since there are no pixels there.",
+						"comment" : "Subviewport of region window. Coordinate (0,0) maps to left, bottom of region window",
 						"label" : "sub viewport"
 					},
 					"order" : 12
@@ -43011,7 +43526,7 @@
 						"comment" : "Checks geometry for bad data",
 						"label" : "validate geometry"
 					},
-					"order" : 110
+					"order" : 113
 				},
 				"volume_attenuation_factor" : 
 				{
@@ -43149,7 +43664,15 @@
 						"checkpoint_max_snapshot_overhead",
 						"checkpoint_snapshot_interval"
 					],
-					"Debug" : [ "debug_pixel", "debug_console", "validate_geometry" ],
+					"Debug" : 
+					[
+						"debug_pixel",
+						"debug_rays_file",
+						"debug_rays_primary_range",
+						"debug_rays_depth_range",
+						"debug_console",
+						"validate_geometry"
+					],
 					"Deep Images" : 
 					[
 						"deep_format",
@@ -48586,7 +49109,7 @@
 				{
 					"attrType" : "SceneObject*",
 					"default" : false,
-					"interface" : "Node",
+					"interface" : "Geometry",
 					"metadata" : 
 					{
 						"comment" : "an alternate object to use when transforming to/from 'object' space"

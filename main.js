@@ -162,8 +162,17 @@ function setupLayerStack() {
                 if (selected === "No DwaBaseLayerable found") return;
 
                 // Create the object
-                createRdlObject(rdl2Objects.scene_classes[selected], selected);
+                const newObj = createRdlObject(rdl2Objects.scene_classes[selected], selected);
                 refreshTheCanvas();
+
+                // Set as active layer material
+                activeLayerMaterial = newObj;
+                activeLayerMaterial.layeredShader = new LayeredShader(activeLayerMaterial);
+                updateLayerStackContainer();
+
+                // Switch to Layers Stack Tab
+                const layersStackTab = document.getElementById('layersStackTab');
+                if (layersStackTab) layersStackTab.click();
             });
         });
     }
