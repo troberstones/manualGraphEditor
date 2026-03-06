@@ -438,6 +438,53 @@ footer {
   border-color: var(--accent-color);
 }
 
+/* Properties Tabs */
+.properties-tab-selector {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #161616;
+  flex-shrink: 0;
+  padding: 8px 8px 0 8px;
+  gap: 4px;
+}
+
+.properties-tab-item {
+  padding: 6px 12px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  background-color: #252525;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.2s;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-bottom: -1px;
+}
+
+.properties-tab-item:hover {
+  background-color: #303030;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.properties-tab-item.active {
+  color: #f97316;
+  background-color: var(--surface-color);
+  border-color: var(--border-color);
+  border-bottom: 1px solid var(--surface-color);
+  border-top: 2px solid #f97316;
+}
+
+.properties-tab-pane {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Context Menu */
 .context-menu {
   position: fixed;
