@@ -567,3 +567,45 @@ footer {
   width: 18px;
   height: 18px;
 }
+
+/* Floating Node Creation Menu */
+.floating-menu {
+  position: fixed;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  width: 300px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.floating-menu .search-input.menu-search {
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.floating-menu .search-input.menu-search:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.floating-menu .menu-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0;
+}
+
+.floating-menu .empty-msg {
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  text-align: center;
+}

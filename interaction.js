@@ -157,6 +157,12 @@ function setupKeyboardEvents() {
                 deleteSelectedObject();
             }
         }
+
+        if (e.key === 'a' || e.key === 'A') {
+            if (typeof showNodeCreationMenu === 'function') {
+                showNodeCreationMenu();
+            }
+        }
     });
 }
 
