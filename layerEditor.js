@@ -218,25 +218,190 @@ function updateLayerStackContainer() {
 
     const ls = activeLayerMaterial.layeredShader;
 
-    // Render Base Material
-    const baseDiv = document.createElement('div');
-    baseDiv.className = 'layer-stack-item base-material';
-    baseDiv.style.padding = '8px';
-    baseDiv.style.border = '1px solid var(--border-color)';
-    baseDiv.style.marginBottom = '4px';
-    baseDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-    baseDiv.textContent = `Base: ${ls.baseMaterial.name} (${ls.baseMaterial.className})`;
-    stackContainer.appendChild(baseDiv);
-
-    // Render Fill Layers
-    ls.fillLayers.forEach((layer, idx) => {
+    // Render Fill Layers (Newest on top)
+    // We iterate backwards to render the top layers first
+    for (let idx = ls.fillLayers.length - 1; idx >= 0; idx--) {
+        const layer = ls.fillLayers[idx];
         const layerDiv = document.createElement('div');
         layerDiv.className = 'layer-stack-item fill-layer';
-        layerDiv.style.padding = '8px';
-        layerDiv.style.border = '1px solid var(--border-color)';
-        layerDiv.style.marginBottom = '4px';
-        layerDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-        layerDiv.textContent = `Fill Layer ${idx + 1}`;
+
+        // Header
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'layer-header';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'layer-name';
+        nameSpan.textContent = layer.name + ` (${idx + 1})`;
+        nameSpan.contentEditable = true;
+        nameSpan.addEventListener('blur', (e) => {
+            layer.name = e.target.textContent.replace(` (${idx + 1})`, '');
+        });
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'layer-actions';
+
+        const maskBtn = document.createElement('button');
+        maskBtn.className = 'mask-btn';
+        maskBtn.title = 'Toggle Masks';
+        maskBtn.textContent = 'M';
+
+        const settingsBtn = document.createElement('button');
+        settingsBtn.className = 'settings-btn';
+        settingsBtn.title = 'Component Settings';
+        settingsBtn.textContent = 'S';
+        settingsBtn.addEventListener('click', () => showFillComponentPopup(layer));
+
+        actionsDiv.appendChild(maskBtn);
+        actionsDiv.appendChild(settingsBtn);
+        headerDiv.appendChild(nameSpan);
+        headerDiv.appendChild(actionsDiv);
+        layerDiv.appendChild(headerDiv);
+
+        // Components
+        const componentsDiv = document.createElement('div');
+        componentsDiv.className = 'layer-components';
+
+        const components = [
+            { key: 'useColor', label: 'Color' },
+            { key: 'useRoughness', label: 'Rgh' },
+            { key: 'useRoughness2', label: 'Rgh2' },
+            { key: 'useMetallic', label: 'Met' },
+            { key: 'useHeight', label: 'Hgt' }
+        ];
+
+        components.forEach(comp => {
+            const lbl = document.createElement('label');
+            const chk = document.createElement('input');
+            chk.type = 'checkbox';
+            chk.checked = layer[comp.key];
+            chk.addEventListener('change', (e) => {
+                layer[comp.key] = e.target.checked;
+            });
+            lbl.appendChild(chk);
+            lbl.appendChild(document.createTextNode(' ' + comp.label));
+            componentsDiv.appendChild(lbl);
+        });
+
+        layerDiv.appendChild(componentsDiv);
+
+        // Masks container
+        const masksContainer = document.createElement('div');
+        masksContainer.className = 'mask-stack-container hidden';
+
+        maskBtn.addEventListener('click', () => {
+            masksContainer.classList.toggle('hidden');
+        });
+
+        const renderMasks = () => {
+            masksContainer.innerHTML = '';
+            layer.masks.forEach((mask, mIdx) => {
+                const maskItem = document.createElement('div');
+                maskItem.className = 'mask-item';
+                maskItem.textContent = `Mask ${mIdx + 1} (${mask.compositionMode})`;
+                masksContainer.appendChild(maskItem);
+            });
+
+            const addMaskBtn = document.createElement('button');
+            addMaskBtn.className = 'add-mask-btn';
+            addMaskBtn.textContent = '+ Add Mask';
+            addMaskBtn.addEventListener('click', () => {
+                layer.masks.push(new LayerMask());
+                renderMasks();
+            });
+            masksContainer.appendChild(addMaskBtn);
+        };
+        renderMasks();
+
+        layerDiv.appendChild(masksContainer);
+
         stackContainer.appendChild(layerDiv);
+    }
+
+    // Render Base Material last (bottom of the list)
+    const baseDiv = document.createElement('div');
+    baseDiv.className = 'layer-stack-item base-material';
+    baseDiv.textContent = `Base: ${ls.baseMaterial.name} (${ls.baseMaterial.className})`;
+    stackContainer.appendChild(baseDiv);
+}
+
+function showFillComponentPopup(fillLayer) {
+    // Basic modal for selecting nodes/parameters
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-modal-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'popup-modal';
+
+    const header = document.createElement('div');
+    header.className = 'popup-modal-header';
+    const title = document.createElement('span');
+    title.textContent = `Component Settings - ${fillLayer.name}`;
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'popup-modal-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        document.body.removeChild(modal);
     });
+
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+    modal.appendChild(header);
+
+    const components = ['color', 'roughness', 'roughness2', 'metallic', 'height'];
+
+    components.forEach(comp => {
+        const row = document.createElement('div');
+        row.className = 'popup-modal-row';
+
+        const lbl = document.createElement('label');
+        lbl.textContent = comp.charAt(0).toUpperCase() + comp.slice(1);
+
+        // Node selection
+        const nodeSelect = document.createElement('select');
+        const emptyOpt = document.createElement('option');
+        emptyOpt.value = "";
+        emptyOpt.textContent = "None";
+        nodeSelect.appendChild(emptyOpt);
+
+        listOfObjects.forEach(obj => {
+            const opt = document.createElement('option');
+            opt.value = obj.id;
+            opt.textContent = obj.name;
+            if (fillLayer.components[comp].sourceNodeId === obj.id) {
+                opt.selected = true;
+            }
+            nodeSelect.appendChild(opt);
+        });
+
+        nodeSelect.addEventListener('change', (e) => {
+            fillLayer.components[comp].sourceNodeId = e.target.value || null;
+        });
+
+        // Target Parameter selection
+        const paramSelect = document.createElement('select');
+        // Very simplistic option list, assuming standard parameters
+        const baseParams = ['albedo', 'roughness', 'roughness2', 'metallic', 'height', 'bump_normal'];
+        baseParams.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p;
+            opt.textContent = p;
+            if (fillLayer.components[comp].targetParameter === p) {
+                opt.selected = true;
+            }
+            paramSelect.appendChild(opt);
+        });
+
+        paramSelect.addEventListener('change', (e) => {
+            fillLayer.components[comp].targetParameter = e.target.value;
+        });
+
+        row.appendChild(lbl);
+        row.appendChild(nodeSelect);
+        row.appendChild(paramSelect);
+        modal.appendChild(row);
+    });
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
 }

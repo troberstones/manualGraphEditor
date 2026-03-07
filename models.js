@@ -25,12 +25,31 @@ function LayeredShader(baseMaterial) {
 }
 
 function FillLayer() {
+    this.name = "Fill Layer";
     this.masks = []; // List of LayerMask objects
+
+    // Checkbox boolean toggles
+    this.useColor = true;
+    this.useHeight = false;
+    this.useRoughness = false;
+    this.useRoughness2 = false;
+    this.useMetallic = false;
+
+    // Contributions
     this.colorContribution = 1.0;
     this.heightContribution = 1.0;
     this.roughnessContribution = 1.0;
     this.roughness2Contribution = 1.0;
     this.metallicContribution = 1.0;
+
+    // Data about node connections mapping to this layer
+    this.components = {
+        color: { sourceNodeId: null, targetParameter: "albedo" },
+        height: { sourceNodeId: null, targetParameter: "height" },
+        roughness: { sourceNodeId: null, targetParameter: "roughness" },
+        roughness2: { sourceNodeId: null, targetParameter: "roughness2" },
+        metallic: { sourceNodeId: null, targetParameter: "metallic" }
+    };
 }
 
 function LayerMask() {

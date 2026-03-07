@@ -44,3 +44,162 @@
 }
 
 /* Ensure context menu from index.css works or override if needed */
+
+.layer-stack-item {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.layer-name {
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.layer-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.layer-actions button {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+.layer-actions button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.layer-components {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.layer-components label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mask-stack-container {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.mask-stack-container.hidden {
+    display: none;
+}
+
+.mask-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 4px;
+}
+
+.mask-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.mask-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.add-mask-btn {
+    width: 100%;
+    margin-top: 8px;
+    background: transparent;
+    border: 1px dashed var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.add-mask-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.popup-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-color, #2a2a2a);
+    border: 1px solid var(--border-color, #444);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    width: 400px;
+}
+
+.popup-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.popup-modal-close {
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.popup-modal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.popup-modal-row label {
+    width: 100px;
+}
+
+.popup-modal-row select {
+    flex: 1;
+    margin-left: 8px;
+    background: var(--bg-dark, #1a1a1a);
+    border: 1px solid var(--border-color, #444);
+    color: var(--text-primary, #ddd);
+    padding: 4px;
+    border-radius: 4px;
+}

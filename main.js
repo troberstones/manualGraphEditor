@@ -179,8 +179,14 @@ function setupLayerStack() {
 
     if (fillLayerBtn) {
         fillLayerBtn.addEventListener('click', () => {
-            console.log("Fill button clicked");
-            // Future implementation
+            if (activeLayerMaterial && activeLayerMaterial.layeredShader) {
+                const newLayer = new FillLayer();
+                newLayer.name = "Fill Layer";
+                activeLayerMaterial.layeredShader.fillLayers.push(newLayer);
+                updateLayerStackContainer();
+            } else {
+                alert("Please add a base material first.");
+            }
         });
     }
 }
