@@ -9,7 +9,7 @@ function setupDefaultProject() {
     setOfNames = [];
     selectedObject = null;
     // create a rdl2 BaseMaterial object
-    var baseMaterial = createRdlObject(rdl2Objects.scene_classes["BaseMaterial"], "Test Base Material");
+    var baseMaterial = createRdlObject(rdl2Objects.scene_classes["DwaBaseMaterial"], "Test Base Material");
     var blendMap = createRdlObject(rdl2Objects.scene_classes["BlendMap"], "Test BlendMap");
     createNodeConnection(baseMaterial, "diffuse_color", blendMap);
     createRdlObject(rdl2Objects.scene_classes["Layer"], "Test Layer");
